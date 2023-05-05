@@ -1,5 +1,5 @@
 $(function(){
-    $("#fileFot").on("change",mostrarImagen);
+    $("#fileFoto").on("change",mostrarImagen);
 })
 /**
  * A partir de la selección de una 
@@ -13,5 +13,5 @@ function mostrarImagen(evento){
     const archivos = evento.target.files
     const archivo = archivos[0]
     const url = URL.createObjectURL(archivo)  
-    $("#imagenMostra").attr("src",url)
+    $("#imagenMostrar").attr("src",url)
   }

@@ -3,20 +3,16 @@
     {% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "administrador/menu.html" %}
+    {% include "menuAdmin.html" %}
 {%endblock %}
 {% block contenido %}
     <br>
     <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
-        <form id="frmRegistrarUsuario" action="/registrarUsuario/" method="post" enctype="multipart/form-data" class="was-validated w-75">                    
+        <form id="frmRegistrarUsuario" action="/registrarUsuario/" method="post" enctype="multipart/form-data" class="was-validated w-75">                   
+            {% csrf_token%}
             <h3 class="text-center fw-bold">REGISTRAR USUARIO</h3>
             <br>
-            {% csrf_token%}
             <div class="form-group row">
-                <div class="mb-3 col-lg-4">
-                    <label for="txtIdentificacion" class="fw-bold">Identificación</label>
-                    <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion" placeholder="Identificación" required>
-                </div>
                 <div class="mb-3 col-lg-4">
                     <label for="txtNombres" class="fw-bold">Nombres</label>
                     <input type="text" name="txtNombres" class="form-control" id="txtNombres" placeholder="Nombre" required> 
@@ -25,13 +21,13 @@
                     <label for="txtApellidos" class="fw-bold">Apellidos</label>
                     <input type="text" name="txtApellidos" class="form-control" id="txtApellidos" placeholder="Apellidos" required>
                 </div>
-            </div>
-            <div class="form-group row">                
                 <div class="mb-3 col-lg-4">
                     <label for="txtCorreo" class="fw-bold">Correo Electrónico</label>
                     <input type="email" name="txtCorreo" class="form-control" id="txtCorreo" placeholder="correo Electrónico" required> 
                 </div>
-                <div class="mb-3 col-lg-4">
+            </div>
+            <div class="form-group row">                
+                <div class="mb-3 col-lg-6">
                     <label for="cbTipo" class="fw-bold">Tipo</label>
                     <select name="cbTipo" id="cbTipo" class="form-select" required>
                         <option value="">Seleccione</option>
@@ -40,12 +36,12 @@
                         <option value="IN">Instructor</option>
                     </select>
                 </div>
-                <div class="mb-3 col-lg-4">  
+                <div class="mb-3 col-lg-6">  
                     <label for="cbTipo" class="fw-bold">Rol en el Sistema</label>              
                     <select name="cbRol" id="cbRol" class="form-select" required>
                         <option value="">Seleccione</option>
                             {% for rol in roles %}
-                                <option value="{{rol.id}}">{{rol.rolNombre}}</option>
+                                <option value="{{rol.id}}">{{rol.name}}</option>
                             {% endfor %}
                     </select>
                 </div>
@@ -53,13 +49,13 @@
             <div class="form-group row">                
                 <div class="mb-3 col-lg-12">                    
                     <label for="fileFoto" class="fw-bold">Foto de la Persona</label>
-                    <input type="file" name="fileFot" class="form-control" id="fileFoto" placeholder="Foto">
+                    <input type="file" name="fileFoto" class="form-control" id="fileFoto" placeholder="Foto">
                 </div>
             </div>
             <div class="form-group row"> 
                 <div class="mt-3 col-lg-12">
                     <div class="text-center">
-                        <img id="imagenMostra" src="" alt="" width="200" height="200">
+                        <img id="imagenMostrar" src="" alt="" width="200" height="200">
                     </div>                         
                 </div>
             </div>

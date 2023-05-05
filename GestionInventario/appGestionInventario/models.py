@@ -227,7 +227,7 @@ class UbicacionFisica(models.Model):
     ubiDeposito = models.SmallIntegerField(db_comment="Número de bodega: 1,2,3,4..")    
     ubiEstante = models.SmallIntegerField(null=True,db_comment="Número de bodega: 1,2,3,4..")
     ubiEntrepano = models.SmallIntegerField(null=True,db_comment="Número de Entrepaño: 1,2,3,4..")
-    ubiLocker = models.SmallIntegerField(db_comment="Número de locker: 1,2,3,4..")
+    ubiLocker = models.SmallIntegerField(null=True,db_comment="Número de locker: 1,2,3,4..")
     fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
     fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
     

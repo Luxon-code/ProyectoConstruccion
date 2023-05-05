@@ -21,8 +21,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('inicio/',views.inicio),
     path('',views.inicio),
     path('inicioAdministrador/',views.inicioAdministrador),
-     path('vistaRegistrarUsuario/',views.vistaRegistrarUsuario),
+    path('vistaRegistrarUsuario/',views.vistaRegistrarUsuario),
+    path('registrarUsuario/',views.registrarUsuario),
+    path('vistaGestionarUsuarios/',views.vistaGestionarUsuarios),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static (settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
