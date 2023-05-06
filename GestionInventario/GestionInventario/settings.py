@@ -133,3 +133,10 @@ AUTH_USER_MODEL = 'appGestionInventario.User'
 
 #recaptcha
 GOOGLE_RECAPTCHA_SECRET_KEY = '6Le90uklAAAAADSBX0UHsES9FRQASHU-tLFQEuDI'
+
+#variables configuración correo
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_HOST_USER="trujillojoseph66@gmail.com" 
+EMAIL_HOST_PASSWORD='madxjjftrhrkejdt'
+EMAIL_USE_TLS=True

@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect # puede verme escribir?
+from django.shortcuts import render,redirect
 from appGestionInventario.models import *
 from django.contrib.auth.models import Group
 from django.db import Error,transaction
@@ -9,6 +9,10 @@ from django.contrib import auth
 from django.conf import settings
 import urllib
 import json
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+import threading
+from smtplib import SMTPException
 # Create your views here.
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -63,6 +67,17 @@ def registrarUsuario(request):
             mensaje="Usuario Agregado Correctamente" 
             retorno = {"mensaje":mensaje}
             #enviar correo al usuario
+            asunto='Registro Sistema Inventario CIES-NEIVA'
+            mensaje=f'Cordial saludo, <b>{user.first_name} {user.last_name}</b>, nos permitimos.\
+                informarle que usted ha sido registrado en el Sistema de Gestión de Inventario \
+                del Centro de la Industria, la Empresa y los Servicios CIES de la ciudad de Neiva.\
+                Nos permitimos enviarle las credenciales de Ingreso a nuestro sistema.<br>\
+                <br><b>Username: </b> {user.username}\
+                <br><b>Password: </b> {passwordGenerado}\
+                <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
+                http://gestioninventario.sena.edu.co.'
+            thread = threading.Thread(target=enviarCorreo, args=(asunto,mensaje, user.email) )
+            thread.start()
             return redirect("/vistaGestionarUsuarios/", retorno)
     except Error as error:
         transaction.rollback()
@@ -149,3 +164,19 @@ def SolicitarElementos(request):
         "materiales": materiales,
     }
     return render(request, "instructor/solicitarElementos.html", json)
+
+def enviarCorreo (asunto=None, mensaje=None, destinatario=None): 
+    remitente = settings.EMAIL_HOST_USER 
+    template = get_template('enviarCorreo.html')
+    contenido = template.render({
+        'destinatario': destinatario,
+        'mensaje': mensaje,
+        'asunto': asunto,
+        'remitente': remitente,
+    })
+    try:
+        correo = EmailMultiAlternatives (asunto, mensaje, remitente, [destinatario]) 
+        correo.attach_alternative (contenido, 'text/html') 
+        correo.send(fail_silently=True)
+    except SMTPException as error: 
+        print(error)
