@@ -26,6 +26,7 @@ urlpatterns = [
     path('vistaRegistrarUsuario/',views.vistaRegistrarUsuario),
     path('registrarUsuario/',views.registrarUsuario),
     path('vistaGestionarUsuarios/',views.vistaGestionarUsuarios),
+    path('solicitarElementos/',views.SolicitarElementos),
 ]
 
 if settings.DEBUG:

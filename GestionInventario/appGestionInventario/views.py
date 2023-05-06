@@ -80,4 +80,7 @@ def vistaGestionarUsuarios(request):
     usuarios=User.objects.all()
     retorno = {"usuarios":usuarios,"user":None}
     return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
+
+def SolicitarElementos(request):
+    return render(request, "instructor/solicitarElementos.html")
     
