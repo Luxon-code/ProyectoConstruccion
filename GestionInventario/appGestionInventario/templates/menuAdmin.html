@@ -1,11 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark verdeSena">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        {% if rutaFoto != "" %}
-            <img src="../static/imagenes/user_avatar.png" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
+      <a class="navbar-brand" href="/inicioAdministrador/">
+        {% if user.userFoto != "" %}
+          <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
         {% else %}  
-            <img src="../media/{{rutaFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
-            {% endif %}
+          <img src="https://png.pngtree.com/png-vector/20190710/ourlarge/pngtree-user-vector-avatar-png-image_1541962.jpg" alt="Foto Usuario" style="width:40px;" class="rounded-pill">
+        {% endif %}
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>

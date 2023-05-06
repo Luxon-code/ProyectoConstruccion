@@ -1,0 +1,64 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "menu.html" %}
+{%endblock %}
+{% block contenido %}
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<div class="col-12 d-flex justify-content-center mt-3" style="margin-bottom: 5rem;">
+    <form action="/login/" method="post" class="was-validated">   
+        {%csrf_token%}    
+        <div class="card mb-2">
+            <div class="card-header verdeSena">
+                <h5 class="card-title text-center text-white my-2">INGRESAR AL SISTEMA</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-floating mb-3">
+                    <input type="text" name="txtUsername" class="form-control" id="txtUsername" placeholder="name@example.com" required>
+                    <label for="floatingInput">Correo Electrónico</label>
+                </div>
+                  <div class="form-floating">
+                    <input type="password" name="txtPassword" class="form-control" id="txtPassword" placeholder="Contraseña" required>
+                    <label for="floatingPassword">Contraseña</label>
+                  </div>
+                <div class="form-group row">
+                    <div class="col-lg-12 d-flex justify-content-center">
+                        <a class="btn btn-link text-black" onclick="abrirModalRecuperarClave()">
+                            ¿Olvidaste tu contraseña?
+                        </a>                                        
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-lg-12 d-flex justify-content-center">                        
+                        <button type="submit" id="btnIniciarSesion" class="btn btn-secondary btn-sm" >Ingresar</button>
+                    </div>
+                </div>
+            </div>         
+        </div>
+       <!-- 6Le90uklAAAAADSBX0UHsES9FRQASHU-tLFQEuDI  secret-->
+       <div class="g-recaptcha" data-sitekey="6Le90uklAAAAADaKKl93RsbOxKmjEiliXHgPA6ZH"></div>
+    </form>
+</div>
+<script>
+    {% if mensaje %}
+    Swal.fire({
+        title: 'Sistema Inventario',
+        text: '{{mensaje}}',
+        icon: 'info',               
+        confirmButtonColor: '#3085d6',             
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {           
+            location.href="/vistaLogin/"
+        }
+    });
+    {% endif %}
+</script>
+
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}

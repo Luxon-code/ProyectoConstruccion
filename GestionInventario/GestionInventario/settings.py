@@ -130,3 +130,6 @@ MEDIA_ROOT= os.path.join(BASE_DIR,'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'appGestionInventario.User'
+
+#recaptcha
+GOOGLE_RECAPTCHA_SECRET_KEY = '6Le90uklAAAAADSBX0UHsES9FRQASHU-tLFQEuDI'

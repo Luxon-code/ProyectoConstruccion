@@ -4,6 +4,11 @@ from django.contrib.auth.models import Group
 from django.db import Error,transaction
 import random
 import string
+from django.contrib.auth import authenticate
+from django.contrib import auth
+from django.conf import settings
+import urllib
+import json
 # Create your views here.
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -12,15 +17,20 @@ def inicio(request):
 
 def inicioAdministrador(request):
     if request.user.is_authenticated:
+        datosSesion={"user": request.user}
         return render(request,"administrador/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
     
 def vistaRegistrarUsuario(request):
-    roles = Group.objects.all()
-    retorno = {"roles":roles,"user":None}
-    return render(request, "administrador/frmRegistrarUsuario.html",retorno)
+    if request.user.is_authenticated:
+        roles = Group.objects.all()
+        retorno = {"roles":roles,"user":request.user}
+        return render(request, "administrador/frmRegistrarUsuario.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
 
 def registrarUsuario(request):
     try:
@@ -39,7 +49,7 @@ def registrarUsuario(request):
             #agregar el usuario a ese Rol
             user.groups.add(rol)
             #si el rol es Administrador se habilita para que tenga acceso al sitio web del administrador
-            if(rol.name=="Administrador"):user.is_staff(True)#problemas cuando se es administrador
+            if(rol.name=="Administrador"):user.is_staff=True#problemas cuando se es administrador
             #guardamos el usuario con lo que tenemos
             user.save()
             #llamamos a la funcion generarPassword 
@@ -77,7 +87,55 @@ def generarPassword():
     return password
 
 def vistaGestionarUsuarios(request):
-    usuarios=User.objects.all()
-    retorno = {"usuarios":usuarios,"user":None}
-    return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
+    if request.user.is_authenticated:
+        usuarios=User.objects.all()
+        retorno = {"usuarios":usuarios,"user":request.user}
+        return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+
     
+    
+def vistaLogin(request):
+    return render(request,"frmIniciarSesion.html")
+
+def login(request):
+    #validar el recapthcha
+    """Begin reCAPTCHA validation"""
+    recaptcha_response = request.POST.get('g-recaptcha-response')
+    url = 'https://www.google.com/recaptcha/api/siteverify'
+    values = {
+        'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY, 
+        'response': recaptcha_response
+    }
+    data = urllib.parse.urlencode(values).encode()
+    req = urllib.request.Request(url, data=data)
+    response = urllib.request.urlopen(req)
+    result = json.loads(response.read().decode()) 
+    print (result)
+    """ End reCAPTCHA validation """
+    if result['success']:
+        username= request.POST["txtUsername"] 
+        password = request.POST["txtPassword"]
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            #registrar la variable de sesión
+            auth.login(request, user)
+            if user.groups.filter(name='Administrador').exists():
+                return redirect('/inicioAdministrador')
+            elif user.groups.filter(name='Asistente').exists():
+                return redirect('/inicioAsistente')
+            else:
+                return redirect('/inicioInstructor')
+        else:
+            mensaje = "Usuario o Contraseña Incorrectas"
+            return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    else:
+        mensaje="Debe validar primero el recaptcha"
+        return render(request, "frmIniciarSesion.html",{"mensaje" :mensaje})
+    
+def salir(request):
+    auth.logout(request)
+    return render(request, "frmIniciarSesion.html",
+                  {"mensaje":"Ha cerrado la sesión"})
