@@ -9,6 +9,39 @@
 <br>
 <h3 class="text-center fw-bold">Solicitar Elementos</h3>
 
+<div class="container">
+    <div>
+        <form class="d-flex">
+            <input class="form-control me-2" type="text" placeholder="Search">
+            <button class="btn btn-primary" type="button">Search</button>
+          </form>
+    </div>
+    <div class="row justify-content-center align-items-center g-2">
+        {% for e in elementos %}
+        <div class="col">
+            {{e.eleNombre}}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Offcanvas Sidebar -->
+<div class="offcanvas offcanvas-start" id="demo">
+    <div class="offcanvas-header">
+      <h1 class="offcanvas-title">Heading</h1>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <p>Some text lorem ipsum.</p>
+      <p>Some text lorem ipsum.</p>
+      <button class="btn btn-secondary" type="button">A Button</button>
+    </div>
+  </div>
+  
+  <!-- Button to open the offcanvas sidebar -->
+  <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
+    Open Offcanvas Sidebar
+  </button>
 {%endblock %}
 {% block piePagina %}
     {% include "piePagina.html" %}

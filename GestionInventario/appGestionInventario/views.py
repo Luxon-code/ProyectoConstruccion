@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect # puede verme escribir?
 from appGestionInventario.models import *
 from django.contrib.auth.models import Group
 from django.db import Error,transaction
@@ -141,5 +141,11 @@ def salir(request):
                   {"mensaje":"Ha cerrado la sesión"})
 
 def SolicitarElementos(request):
-    return render(request, "instructor/solicitarElementos.html")
+    elementos = Elemento.objects.all()
+    materiales = Material.objects.all()
     
+    json = {
+        "elementos": elementos,
+        "materiales": materiales,
+    }
+    return render(request, "instructor/solicitarElementos.html", json)
