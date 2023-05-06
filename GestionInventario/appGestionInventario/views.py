@@ -139,3 +139,10 @@ def salir(request):
     auth.logout(request)
     return render(request, "frmIniciarSesion.html",
                   {"mensaje":"Ha cerrado la sesión"})
+    usuarios=User.objects.all()
+    retorno = {"usuarios":usuarios,"user":None}
+    return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
+
+def SolicitarElementos(request):
+    return render(request, "instructor/solicitarElementos.html")
+    

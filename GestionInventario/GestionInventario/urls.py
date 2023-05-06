@@ -29,6 +29,7 @@ urlpatterns = [
     path('vistaLogin/',views.vistaLogin),
     path('login/',views.login),
     path('salir/',views.salir),
+    path('solicitarElementos/',views.SolicitarElementos),
 ]
 
 if settings.DEBUG:
