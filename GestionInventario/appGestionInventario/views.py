@@ -242,5 +242,5 @@ def registrarElementos(request):
     except Error as error:
         transaction.rollback()
         mensaje=f"{error}"
-    retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado}
+    retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,"estadoElemento":estadosElementos}
     return render(request,"administrador/frmRegistrarElementos.html",retorno)
