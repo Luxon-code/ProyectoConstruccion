@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "menuAdmin.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<h3 class="text-center fw-bold">GESTIONAR ELEMENTOS DEVOLUTIVOS</h3>
+
+<div class="table-responsive" style="margin-bottom: 5rem;">
+    <a href="/vistaRegistrarElementos/"><button class="btn btn-secondary">Agregar</button></a>
+    <br>
+    <br>
+    <table id="tblElementos" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center bg-success text-white">
+                <th>Codigo Propio</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Foto</th>
+                <th>Accion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for devolutivo in devolutivos %}
+                <tr>
+                    <td>{{devolutivo.devElemento.eleCodigo}}</td>
+                    <td>{{devolutivo.devElemento.eleNombre}}</td>
+                    <td>{{devolutivo.devDescripcion}}</td>
+                    <td>{{devolutivo.devElemento.eleTipo}}</td>
+                    <td>{{devolutivo.devElemento.eleEstado}}</td>
+                    <td><img src="../media/{{devolutivo.devFoto}}" width="50" height="50"></td>
+                    <td class="text-center">
+                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- The Modal -->
+
+
+<script>
+    $("#tblElementos").DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+</script>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}

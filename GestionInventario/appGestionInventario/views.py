@@ -181,3 +181,67 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
         correo.send(fail_silently=True)
     except SMTPException as error: 
         print(error)
+
+def vistaGestionarElementos(request):
+    if request.user.is_authenticated:
+        retorno = {"devolutivos":Devolutivo.objects.all(),"user":request.user}
+        return render(request,"administrador/vistaGestionarElementos.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def vistaRegistrarElementos(request):
+    if request.user.is_authenticated:
+        retorno = {"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user}
+        return render(request,"administrador/frmRegistrarElementos.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def registrarElementos(request):
+    estado = False
+    try:
+        #datos del elemento en general
+        nombreEle = request.POST['txtNombre']
+        tipoEle = request.POST['cbTipo']
+        estadoEle = request.POST['cbEstado']
+        #datos del devolitivo
+        placaSena = request.POST['txtPlacaSena']
+        serial = request.POST['txtSerial']
+        marca = request.POST['txtMarca'] 
+        descripcion = request.POST['txtDescripcion']    
+        fechaIngreso = request.POST['txtFecha']
+        valor = float(request.POST['txtValor'])   
+        foto= request.FILES.get('fileFoto',False)
+        #datos de la ubucacion fisica
+        deposito = request.POST['txtDesposito']
+        estante = request.POST['txtEstante']
+        entrepaño = request.POST['txtEntrepaño']
+        loker = request.POST['txtLoker']
+        with transaction.atomic():
+            #obtener cuantos elementos se han registrado    
+            cantidad = Elemento.objects.all().count()
+            #crear un codigo a partir de la cantidad, ajustando 0 al inicio
+            codigoElemento = tipoEle.upper() + str(cantidad+1).rjust(5, '0')
+            #crear el elemento
+            elemento = Elemento(eleCodigo = codigoElemento,eleNombre=nombreEle,eleTipo=tipoEle,eleEstado=estadoEle)
+            #salvar el elemento en la base de datos
+            elemento.save()
+            #crear objeto ubicación física del elemento
+            ubicacion = UbicacionFisica(ubiElemento = elemento,ubiDeposito =deposito,ubiEstante=estante,ubiEntrepano=entrepaño,
+                                        ubiLocker=loker)
+            #registrar en la base de datos la ubicación física del elemento
+            ubicacion.save()
+            #crear el devolutivo
+            devolutivo = Devolutivo(devPlacaSena=placaSena,devSerial=serial,devDescripcion=descripcion,
+                                    devMarca=marca,devFechaIngresoSENA=fechaIngreso,devValor=valor,
+                                    devFoto=foto,devElemento=elemento) 
+            #registrar el elemento en la base de datos
+            devolutivo.save()
+            estado=True
+            mensaje=f"Elemento Devolutivo registrado Satisfactoriamente con el codigo {codigoElemento}"
+    except Error as error:
+        transaction.rollback()
+        mensaje=f"{error}"
+    retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado}
+    return render(request,"administrador/frmRegistrarElementos.html",retorno)
