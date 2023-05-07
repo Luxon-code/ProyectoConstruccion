@@ -134,6 +134,7 @@ def login(request):
         username= request.POST["txtUsername"] 
         password = request.POST["txtPassword"]
         user = authenticate(username=username, password=password)
+        print (user)
         if user is not None:
             #registrar la variable de sesión
             auth.login(request, user)
