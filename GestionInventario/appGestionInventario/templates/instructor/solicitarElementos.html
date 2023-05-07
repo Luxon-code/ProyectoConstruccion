@@ -1,48 +1,87 @@
 {% extends "index.html" %}
 {% block encabezado %}
-    {% include "encabezado.html" %}
+{% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "menuAdmin.html" %}
+{% include "menuAdmin.html" %}
 {%endblock %}
 {% block contenido %}
 <br>
 <h3 class="text-center fw-bold">Solicitar Elementos</h3>
 
 <div class="container">
-    <div>
-        <form class="d-flex">
-            <input class="form-control me-2" type="text" placeholder="Search">
-            <button class="btn btn-primary" type="button">Search</button>
-          </form>
-    </div>
-    <div class="row justify-content-center align-items-center g-2">
+  <div>
+    <form class="d-flex">
+      <!-- Button to open the offcanvas sidebar -->
+      <button class="btn btn-primary me-2 col-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
+        Ver Elementos
+      </button>
+      <input class="form-control me-2" type="text" placeholder="Search" list="elementos">
+      <button class="btn btn-primary col-1" type="button">Search</button>
+      <datalist id="elementos">
         {% for e in elementos %}
-        <div class="col">
-            {{e.eleNombre}}
-        </div>
+        <option value="{{e.eleNombre}}"></option>
         {% endfor %}
+      </datalist>
+    </form>
+  </div>
+  <div class="row justify-content-center align-items-center g-2 my-1">
+    {% for e in elementos %}
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">{{e.eleNombre}}</h4>
+          {% if e.eleTipo == "MAQ" %}
+          <p class="card-text">Maquinaria</p>
+          {% elif e.eleTipo == "HER" %}
+          <p class="card-text">Herramienta</p>
+          {% elif e.eleTipo == "EQU" %}
+          <p class="card-text">Equipo</p>
+          {% elif e.eleTipo == "MAT" %}
+          <p class="card-text">Material</p>
+          {% endif %}
+          <p class="card-text">{{e.eleEstado}}</p>
+          <div class="d-flex">
+            <div class="input-group mb-3 w-50 me-1">
+              <button class="btn btn-outline-success" type="button" id="button-addon1">+</button>
+              <input type="text" class="form-control" placeholder="Cantidad" aria-label="Example text with button addon"
+                aria-describedby="button-addon1">
+              <button class="btn btn-outline-danger" type="button" id="button-addon1">-</button>
+            </div>
+            <button class="btn btn-danger mb-3 w-50">Borrar</button>
+          </div>
+        </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </div>
 
 <!-- Offcanvas Sidebar -->
 <div class="offcanvas offcanvas-start" id="demo">
-    <div class="offcanvas-header">
-      <h1 class="offcanvas-title">Heading</h1>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-      <p>Some text lorem ipsum.</p>
-      <p>Some text lorem ipsum.</p>
-      <button class="btn btn-secondary" type="button">A Button</button>
-    </div>
+  <div class="offcanvas-header">
+    <h1 class="offcanvas-title">Todos Los Elementos</h1>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
   </div>
-  
-  <!-- Button to open the offcanvas sidebar -->
-  <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
-    Open Offcanvas Sidebar
-  </button>
+  <div class="offcanvas-body">
+    <div class="d-flex">
+      <input class="form-control me-2 w-75" type="text" placeholder="Search" list="elementos">
+      <button class="btn btn-primary w-25" type="button">Search</button>
+    </div>
+    {% for e in elementos %}
+    <div class="card my-1">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <p class="card-text">{{e.eleNombre}}</p>
+        <button class="btn btn-primary">Add</button>
+      </div>
+    </div>
+    {% endfor %}
+    <button class="btn btn-secondary" type="button">A Button</button>
+  </div>
+</div>
+
+
 {%endblock %}
 {% block piePagina %}
-    {% include "piePagina.html" %}
+{% include "piePagina.html" %}
 {%endblock %}
