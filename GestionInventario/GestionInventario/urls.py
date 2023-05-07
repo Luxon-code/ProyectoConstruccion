@@ -30,6 +30,9 @@ urlpatterns = [
     path('login/',views.login),
     path('salir/',views.salir),
     path('solicitarElementos/',views.SolicitarElementos),
+    path('vistaGestionarElementos/',views.vistaGestionarElementos),
+    path('vistaRegistrarElementos/',views.vistaRegistrarElementos),
+    path('registrarElemento/',views.registrarElementos),
 ]
 
 if settings.DEBUG:
