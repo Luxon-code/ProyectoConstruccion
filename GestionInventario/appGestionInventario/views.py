@@ -216,8 +216,14 @@ def registrarElementos(request):
         #datos de la ubucacion fisica
         deposito = request.POST['txtDesposito']
         estante = request.POST.get('txtEstante',False)
+        if estante == "":
+            estante = 0
         entrepaño = request.POST.get('txtEntrepaño',False)
+        if entrepaño == "":
+            entrepaño = 0
         loker = request.POST.get('txtLoker',False)
+        if loker == "":
+            loker = 0
         with transaction.atomic():
             #obtener cuantos elementos se han registrado    
             cantidad = Elemento.objects.all().count()
@@ -245,3 +251,9 @@ def registrarElementos(request):
         mensaje=f"{error}"
     retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,"estadoElemento":estadosElementos}
     return render(request,"administrador/frmRegistrarElementos.html",retorno)
+
+def asistenteInicio(request):
+    return render(request, "asistente/inicio.html")
+
+def asistenteSolicitudes(request):
+    return render(request,"asistente/solicitudes.html")

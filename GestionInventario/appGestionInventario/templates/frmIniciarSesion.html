@@ -8,7 +8,7 @@
 {% block contenido %}
 
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<div class="col-12 d-flex justify-content-center mt-3" style="margin-bottom: 5rem;">
+<div class="col-12 d-flex justify-content-center align-items-center mt-3" style="margin-bottom: 5rem; min-height: 75vh;">
     <form action="/login/" method="post" class="was-validated">   
         {%csrf_token%}    
         <div class="card mb-2">

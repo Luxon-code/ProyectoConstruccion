@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<h3 class="text-center mt-3 fw-bold">MÓDULO ASISTENTE</h3>
+<br />
+<div class="row" style="margin: 0 auto !important; width: 55%">
+  <div class="col-sm">
+    <div class="text-center">
+        <i class="bi bi-person-fill-gear" style="font-size: 8rem;"></i>
+    </div>
+    <div class="text-center fw-bold">Ver Solicitudes</div>
+  </div>
+  <div class="col-sm">
+    <div class="text-center" style="font-size: 8rem;">
+        <i class="bi bi-list-check"></i>
+    </div>
+
+    <div class="text-center fw-bold">Generar Reposte</div>
+  </div>
+</div>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}
