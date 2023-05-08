@@ -215,9 +215,9 @@ def registrarElementos(request):
         foto= request.FILES.get('fileFoto',False)
         #datos de la ubucacion fisica
         deposito = request.POST['txtDesposito']
-        estante = request.POST['txtEstante']
-        entrepaño = request.POST['txtEntrepaño']
-        loker = request.POST['txtLoker']
+        estante = request.POST.get('txtEstante',False)
+        entrepaño = request.POST.get('txtEntrepaño',False)
+        loker = request.POST.get('txtLoker',False)
         with transaction.atomic():
             #obtener cuantos elementos se han registrado    
             cantidad = Elemento.objects.all().count()
