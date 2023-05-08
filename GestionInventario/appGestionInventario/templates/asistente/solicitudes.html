@@ -1,17 +1,140 @@
 {% extends "index.html" %}
 {% block encabezado %}
-    {% include "encabezado.html" %}
+{% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "asistente/menu.html" %}
+{% include "asistente/menu.html" %}
 {%endblock %}
 {% block contenido %}
 <h3 class="text-center mt-3 fw-bold">SOLICITUDES</h3>
 <br />
-<div class="row" style="margin: 0 auto !important; width: 55%">
-  
+<ul class="nav nav-tabs w-75">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Aprobadas</a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link" href="#">Por Aprobar</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Rechazadas</a>
+    </li>
+</ul>
+
+<div class="w-75">
+    <div class="card my-1">
+        <div class="card-body" data-bs-toggle="collapse" data-bs-target="#collapseExample1">
+            <h4 class="card-title">Nombre del proyecto</h4>
+            <p class="card-text">El que hizo el proyecto</p>
+            <div class="collapse" id="collapseExample1">
+                <div class="table-responsive">
+                    <table class="table table-secondary table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Codigo</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Elemento</th>
+                                <th scope="col">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="">
+                                <td scope="row">ELM012345</td>
+                                <td>Herramienta</td>
+                                <td>Bueno</td>
+                                <td>Martillo</td>
+                                <td>5</td>
+                            </tr>
+                            <tr class="">
+                                <td scope="row">MAQ012345</td>
+                                <td>Maquinaria</td>
+                                <td>Bueno</td>
+                                <td>Buldoser</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card my-1">
+        <div class="card-body" data-bs-toggle="collapse" data-bs-target="#collapseExample2">
+            <h4 class="card-title">Nombre del proyecto</h4>
+            <p class="card-text">El que hizo el proyecto</p>
+            <div class="collapse" id="collapseExample2">
+                <div class="table-responsive">
+                    <table class="table table-secondary table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Codigo</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Elemento</th>
+                                <th scope="col">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="">
+                                <td scope="row">ELM012345</td>
+                                <td>Herramienta</td>
+                                <td>Bueno</td>
+                                <td>Martillo</td>
+                                <td>5</td>
+                            </tr>
+                            <tr class="">
+                                <td scope="row">MAQ012345</td>
+                                <td>Maquinaria</td>
+                                <td>Bueno</td>
+                                <td>Buldoser</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card my-1">
+        <div class="card-body" data-bs-toggle="collapse" data-bs-target="#collapseExample3">
+            <h4 class="card-title">Nombre del proyecto</h4>
+            <p class="card-text">El que hizo el proyecto</p>
+            <div class="collapse" id="collapseExample3">
+                <div class="table-responsive">
+                    <table class="table table-secondary table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Codigo</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Elemento</th>
+                                <th scope="col">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="">
+                                <td scope="row">ELM012345</td>
+                                <td>Herramienta</td>
+                                <td>Bueno</td>
+                                <td>Martillo</td>
+                                <td>5</td>
+                            </tr>
+                            <tr class="">
+                                <td scope="row">MAQ012345</td>
+                                <td>Maquinaria</td>
+                                <td>Bueno</td>
+                                <td>Buldoser</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {%endblock %}
 {% block piePagina %}
-    {% include "piePagina.html" %}
+{% include "piePagina.html" %}
 {%endblock %}
