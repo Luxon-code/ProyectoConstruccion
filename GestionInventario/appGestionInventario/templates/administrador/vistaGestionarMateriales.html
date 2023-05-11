@@ -13,7 +13,7 @@
     <a href="/vistaRegistrarElementos/"><button class="btn btn-secondary">Agregar</button></a>
     <br>
     <br>
-    <table id="tblElementos" class="table table-bordered table-hover">
+    <table id="tblMateriales" class="table table-bordered table-hover">
         <thead>
             <tr class="text-center bg-success text-white">
                 <th>Codigo Propio</th>
@@ -47,12 +47,7 @@
 
 
 <script>
-    $("#tblElementos").DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
-    } );
+    cargarDataTable($("#tblMateriales"),"Elementos Materiales",5)
 </script>
 {%endblock %}
 {% block piePagina %}

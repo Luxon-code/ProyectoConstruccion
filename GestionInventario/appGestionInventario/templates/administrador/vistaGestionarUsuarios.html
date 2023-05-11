@@ -43,12 +43,7 @@
 
 
 <script>
-    $("#tblPersonas").DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
-    } );
+    cargarDataTable($("#tblPersonas"),"Usuarios Registrados",5)
 </script>
 {%endblock %}
 {% block piePagina %}

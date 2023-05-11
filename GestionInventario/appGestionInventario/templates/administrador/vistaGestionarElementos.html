@@ -47,12 +47,7 @@
 
 
 <script>
-    $("#tblElementos").DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
-    } );
+   cargarDataTable($("#tblElementos"),"Elementos Devolutivos",5)
 </script>
 {%endblock %}
 {% block piePagina %}
