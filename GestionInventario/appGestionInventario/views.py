@@ -253,7 +253,25 @@ def registrarElementos(request):
     return render(request,"administrador/frmRegistrarElementos.html",retorno)
 
 def asistenteInicio(request):
-    return render(request, "asistente/inicio.html")
+    if request.user.is_authenticated:
+        datosSesion={"user": request.user}
+        return render(request, "asistente/inicio.html",datosSesion)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
 
 def asistenteSolicitudes(request):
-    return render(request,"asistente/solicitudes.html")
+    if request.user.is_authenticated:
+        datosSesion={"user": request.user}
+        return render(request,"asistente/solicitudes.html",datosSesion)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+
+def vistaGestionarMateriales(request):
+    if request.user.is_authenticated:
+        retorno = {"materiales":Material.objects.all(),"user":request.user}
+        return render(request,"administrador/vistaGestionarMateriales.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})

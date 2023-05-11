@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark verdeSena">
     <div class="container-fluid">
       <a class="navbar-brand" href="/inicioAdministrador/">
-        {% if user.userFoto != "" and user.userFoto != "False" %}
+        {% if user.userFoto != "" or user.userFoto != "False" %}
           <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
         {% else %}  
           <img src="https://png.pngtree.com/png-vector/20190710/ourlarge/pngtree-user-vector-avatar-png-image_1541962.jpg" alt="No foto" style="width:40px;" class="rounded-pill">
@@ -12,6 +12,9 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="vistaRegistrarElementos/">Registrar Elementos</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="/asistente/vistaSolicitudes">Ver solicitudes</a>
           </li>
