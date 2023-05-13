@@ -249,7 +249,8 @@ def registrarElementos(request):
     except Error as error:
         transaction.rollback()
         mensaje=f"{error}"
-    retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,"estadoElemento":estadosElementos}
+    retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,
+               "estadoElemento":estadosElementos,"ubicacionFisica":ubicacion}
     return render(request,"administrador/frmRegistrarElementos.html",retorno)
 
 def asistenteInicio(request):
@@ -275,3 +276,63 @@ def vistaGestionarMateriales(request):
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def vistaRegistrarMateriales(request):
+    if request.user.is_authenticated:
+        retorno = {"unidadesMedidas":UnidadMedida.objects.all(),"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user}
+        return render(request, "administrador/frmRegistrarMateriales.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def registrarMaterial(request):
+    estado = False
+    try:
+        #datos del elemento en general
+        nombreEle = request.POST['txtNombre']
+        tipoEle = request.POST['cbTipo']
+        estadoEle = request.POST['cbEstado']
+        #datos del elemento material
+        referencia = request.POST['txtReferencia']
+        marca = request.POST.get('txtMarca',False)
+        unidadMedida = request.POST['cbUnidadMedida']
+        #datos de la ubucacion fisica
+        deposito = request.POST['txtDesposito']
+        estante = request.POST.get('txtEstante',False)
+        if estante == "":
+            estante = 0
+        entrepaño = request.POST.get('txtEntrepaño',False)
+        if entrepaño == "":
+            entrepaño = 0
+        loker = request.POST.get('txtLoker',False)
+        if loker == "":
+            loker = 0
+        with transaction.atomic():
+            #obtener cuantos elementos se han registrado    
+            cantidad = Elemento.objects.all().count()
+            #crear un codigo a partir de la cantidad, ajustando 0 al inicio
+            codigoElemento = tipoEle.upper() + str(cantidad+1).rjust(5, '0')
+            #crear el elemento
+            elemento = Elemento(eleCodigo = codigoElemento,eleNombre=nombreEle,eleTipo=tipoEle,eleEstado=estadoEle)
+            #salvar el elemento en la base de datos
+            elemento.save()
+            #crear objeto ubicación física del elemento
+            ubicacion = UbicacionFisica(ubiElemento = elemento,ubiDeposito =deposito,ubiEstante=estante,ubiEntrepano=entrepaño,
+                                        ubiLocker=loker)
+            #registrar en la base de datos la ubicación física del elemento
+            ubicacion.save()
+            #buscar el objeto unidad medida
+            UMedida = UnidadMedida.objects.get(pk=unidadMedida)
+            print(UMedida)
+            #crear el objeto Material
+            material = Material(matReferencia = referencia,matMarca=marca,matUnidadMedida=UMedida,matElemento=elemento)
+            material.save()
+            estado = True
+            mensaje =f"Elemento Material registrado Satisfactoriamente con el codigo {codigoElemento}" 
+    except Error as error:
+        transaction.rollback()
+        mensaje=f"{error}"
+    retorno = {"mensaje":mensaje,"Material": material,"estado":estado,"tipoElemento": tipoElemento,
+               "estadoElemento":estadosElementos,"unidadesMedidas":UnidadMedida.objects.all(),
+               "ubicacionFisica":ubicacion}
+    return render(request,"administrador/frmRegistrarMateriales.html",retorno)

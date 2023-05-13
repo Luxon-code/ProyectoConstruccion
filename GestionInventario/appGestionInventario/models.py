@@ -18,7 +18,7 @@ tipoElemento = [
     ('HER','Herramientas'),('MAQ','Maquinaria'),('EQU','Equipos'),('MAT','Materiales'),  
 ]
 estadosElementos = [
-    ('Bueno','Bueno'),('Bueno','Regular'),('Bueno','Malo'),    
+    ('Bueno','Bueno'),('Regular','Regular'),('Malo','Malo'),    
 ]
 estadoSolicitudes = [
     ('Solicitada','Solicitada'),('Aprobada','Aprobada'),('Rechazada','Rechazada'),
