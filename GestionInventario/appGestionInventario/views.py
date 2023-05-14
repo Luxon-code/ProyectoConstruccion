@@ -336,3 +336,11 @@ def registrarMaterial(request):
                "estadoElemento":estadosElementos,"unidadesMedidas":UnidadMedida.objects.all(),
                "ubicacionFisica":ubicacion}
     return render(request,"administrador/frmRegistrarMateriales.html",retorno)
+
+def inicioInstructor(request):
+    if request.user.is_authenticated:
+        datosSesion={"user": request.user}
+        return render(request,"instructor/inicio.html",datosSesion)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
