@@ -34,7 +34,7 @@ urlpatterns = [
     path('vistaGestionarElementos/',views.vistaGestionarElementos),
     path('vistaRegistrarElementos/',views.vistaRegistrarElementos),
     path('registrarElemento/',views.registrarElementos),
-    path('asistente/vistaSolicitudes/',views.asistenteSolicitudes),
+    path('vistaSolicitudes/',views.asistenteSolicitudes),
     path('vistaGestionarMateriales/',views.vistaGestionarMateriales),
     path('vistaRegistrarMateriales/',views.vistaRegistrarMateriales),
     path('registrarMaterial/',views.registrarMaterial),

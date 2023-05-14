@@ -4,7 +4,7 @@
         {% if user.userFoto != "False" %}
           <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
         {% else %}  
-          <img src="https://png.pngtree.com/png-vector/20190710/ourlarge/pngtree-user-vector-avatar-png-image_1541962.jpg" alt="No foto" style="width:40px;" class="rounded-pill">
+          <img src="../media/user-logo.png" alt="No foto" style="width:40px;" class="rounded-pill">
         {% endif %}
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,13 +13,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="vistaRegistrarElementos/">Registrar Elementos</a>
+            <a class="nav-link" href="/vistaRegistrarElementos/">Registrar Elementos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/asistente/vistaSolicitudes">Ver solicitudes</a>
+            <a class="nav-link" href="/vistaSolicitudes/">Ver solicitudes</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/vistaLogin/">Reportes</a>
+            <a class="nav-link" href="#">Reportes</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/salir/">Salir</a>
