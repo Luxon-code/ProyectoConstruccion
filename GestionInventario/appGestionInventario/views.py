@@ -279,8 +279,8 @@ def vistaGestionarMateriales(request):
     
 def vistaRegistrarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"unidadesMedidas":UnidadMedida.objects.all(),"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user}
-        return render(request, "administrador/frmRegistrarMateriales.html",retorno)
+        retorno = {"unidadesMedidas":UnidadMedida.objects.all(),"estadoElemento":estadosElementos,"user":request.user}
+        return render(request, "asistente/frmRegistrarMateriales.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
@@ -290,11 +290,10 @@ def registrarMaterial(request):
     try:
         #datos del elemento en general
         nombreEle = request.POST['txtNombre']
-        tipoEle = request.POST['cbTipo']
         estadoEle = request.POST['cbEstado']
         #datos del elemento material
-        referencia = request.POST['txtReferencia']
-        marca = request.POST.get('txtMarca',False)
+        referencia = request.POST.get('txtReferencia',None)
+        marca = request.POST.get('txtMarca',None)
         unidadMedida = request.POST['cbUnidadMedida']
         #datos de la ubucacion fisica
         deposito = request.POST['txtDesposito']
@@ -309,11 +308,11 @@ def registrarMaterial(request):
             loker = 0
         with transaction.atomic():
             #obtener cuantos elementos se han registrado    
-            cantidad = Elemento.objects.all().count()
+            cantidad = Elemento.objects.all().filter(eleTipo="MAT").count()
             #crear un codigo a partir de la cantidad, ajustando 0 al inicio
-            codigoElemento = tipoEle.upper() + str(cantidad+1).rjust(5, '0')
+            codigoElemento = "MAT" + str(cantidad+1).rjust(5, '0')
             #crear el elemento
-            elemento = Elemento(eleCodigo = codigoElemento,eleNombre=nombreEle,eleTipo=tipoEle,eleEstado=estadoEle)
+            elemento = Elemento(eleCodigo = codigoElemento,eleNombre=nombreEle,eleTipo="MAT",eleEstado=estadoEle)
             #salvar el elemento en la base de datos
             elemento.save()
             #crear objeto ubicación física del elemento
@@ -323,7 +322,6 @@ def registrarMaterial(request):
             ubicacion.save()
             #buscar el objeto unidad medida
             UMedida = UnidadMedida.objects.get(pk=unidadMedida)
-            print(UMedida)
             #crear el objeto Material
             material = Material(matReferencia = referencia,matMarca=marca,matUnidadMedida=UMedida,matElemento=elemento)
             material.save()
@@ -332,15 +330,28 @@ def registrarMaterial(request):
     except Error as error:
         transaction.rollback()
         mensaje=f"{error}"
-    retorno = {"mensaje":mensaje,"Material": material,"estado":estado,"tipoElemento": tipoElemento,
+    retorno = {"mensaje":mensaje,"estado":estado,
                "estadoElemento":estadosElementos,"unidadesMedidas":UnidadMedida.objects.all(),
-               "ubicacionFisica":ubicacion}
-    return render(request,"administrador/frmRegistrarMateriales.html",retorno)
+               "material":material,"ubicacionFisica":ubicacion}
+    return render(request,"asistente/frmRegistrarMateriales.html",retorno)
 
 def inicioInstructor(request):
     if request.user.is_authenticated:
         datosSesion={"user": request.user}
         return render(request,"instructor/inicio.html",datosSesion)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def vistaRegistrarEntradaMaterial(request):
+    if request.user.is_authenticated:
+        retorno = {
+            "materiales": Material.objects.all(),
+            "unidadesMedida": UnidadMedida.objects.all(),
+            "usuarios": User.objects.all(),
+            "proveedores": Proveedor.objects.all(),
+        }
+        return render(request, 'asistente/frmRegistrarEntradaMaterial.html',retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})

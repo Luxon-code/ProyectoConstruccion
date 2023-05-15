@@ -3,14 +3,13 @@
     {% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "menuAdmin.html" %}
+    {% include "administrador/menu.html" %}
 {%endblock %}
 {% block contenido %}
 <br>
 <h3 class="text-center fw-bold">GESTIONAR ELEMENTOS MATERIALES</h3>
 
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
-    <a href="/vistaRegistrarMateriales/"><button class="btn btn-secondary">Agregar</button></a>
     <br>
     <br>
     <table id="tblMateriales" class="table table-bordered table-hover">

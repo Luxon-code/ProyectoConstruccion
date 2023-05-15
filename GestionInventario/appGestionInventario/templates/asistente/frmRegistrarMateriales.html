@@ -3,7 +3,7 @@
     {% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "menuAdmin.html" %}
+    {% include "asistente/menu.html" %}
 {%endblock %}
 {% block contenido %}
     <br>
@@ -13,23 +13,13 @@
             <h3 class="text-center fw-bold">REGISTRAR ELEMENTOS MATERIALES</h3>
             <br>
             <div class="form-group row">
-                <div class="mb-3 col-lg-4">
+                <div class="mb-3 col-lg-6">
                     <label for="txtNombre" class="fw-bold">Nombre del elemento:</label>
                     <input type="text" name="txtNombre" class="form-control" id="txtNombre" placeholder="Nombre del elemento" required
                     value=""> 
                     <div class="invalid-feedback">Por favor ingrese el nombre del elemento</div>
                 </div>
-                <div class="mb-3 col-lg-4">
-                    <label for="cbTipo" class="fw-bold">Tipo de elemento:</label>              
-                    <select name="cbTipo" id="cbTipo" class="form-select" required>
-                        <option value="">Seleccione</option>
-                            {% for tipo in tipoElemento %}
-                                <option value="{{tipo.0}}">{{tipo.1}}</option>
-                            {% endfor %}
-                    </select>
-                    <div class="invalid-feedback">Por favor eliga un tipo</div>
-                </div>
-                <div class="mb-3 col-lg-4">
+                <div class="mb-3 col-lg-6">
                     <label for="cbEstado" class="fw-bold">Estado del elemento:</label>              
                     <select name="cbEstado" id="cbEstado" class="form-select" required>
                         <option value="">Seleccione</option>
@@ -41,18 +31,12 @@
                 </div>
             </div>
             <div class="form-group row">                
-                <div class="mb-3 col-lg-4">
-                    <label for="txtReferencia" class="fw-bold">Referencia:</label>
-                    <input type="text" name="txtReferencia" class="form-control" id="txtReferencia" placeholder="Nombre del elemento" required
-                    value=""> 
-                    <div class="invalid-feedback">Por favor ingrese el Referencia del material</div>
-                </div>
-                <div class="mb-3 col-lg-4">  
+                <div class="mb-3 col-lg-6">  
                     <label for="txtMarca" class="fw-bold">Marca: (*opcional)</label>
                     <input type="text" name="txtMarca" class="form-control" id="txtMarca" placeholder="Marca del elemento"
                     value=""> 
                 </div>
-                <div class="mb-3 col-lg-4">
+                <div class="mb-3 col-lg-6">
                     <label for="cbUnidadMedida" class="fw-bold">Unidad de medida:</label>              
                     <select name="cbUnidadMedida" id="cbUnidadMedida" class="form-select" required>
                         <option value="">Seleccione</option>
@@ -61,6 +45,18 @@
                             {% endfor %}
                     </select>
                     <div class="invalid-feedback">Por favor eliga una unidad de medida</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="mb-3 col-lg-12">
+                    <label for="txtReferencia" class="fw-bold">Referencia:</label>
+                    <textarea
+                    class="form-control"
+                    id="txtReferencia"
+                    name="txtReferencia"
+                    rows="3"
+                    style="resize: none"
+                    ></textarea>
                 </div>
             </div>
             <h4 class="text-center text-black-50 my-2">Ubicación Fisica</h4>
