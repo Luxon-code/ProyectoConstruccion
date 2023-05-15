@@ -21,7 +21,7 @@ def inicio(request):
 
 def inicioAdministrador(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
         return render(request,"administrador/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
@@ -30,7 +30,7 @@ def inicioAdministrador(request):
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
         roles = Group.objects.all()
-        retorno = {"roles":roles,"user":request.user}
+        retorno = {"roles":roles,"user":request.user,"rol":request.user.groups.get().name}
         return render(request, "administrador/frmRegistrarUsuario.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -104,7 +104,7 @@ def generarPassword():
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
         usuarios=User.objects.all()
-        retorno = {"usuarios":usuarios,"user":request.user}
+        retorno = {"usuarios":usuarios,"user":request.user,"rol":request.user.groups.get().name}
         return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -184,7 +184,7 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
 
 def vistaGestionarElementos(request):
     if request.user.is_authenticated:
-        retorno = {"devolutivos":Devolutivo.objects.all(),"user":request.user}
+        retorno = {"devolutivos":Devolutivo.objects.all(),"user":request.user,"rol":request.user.groups.get().name}
         return render(request,"administrador/vistaGestionarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -192,7 +192,8 @@ def vistaGestionarElementos(request):
     
 def vistaRegistrarElementos(request):
     if request.user.is_authenticated:
-        retorno = {"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user}
+        retorno = {"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user,
+                   "rol":request.user.groups.get().name}
         return render(request,"administrador/frmRegistrarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -255,7 +256,7 @@ def registrarElementos(request):
 
 def asistenteInicio(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
         return render(request, "asistente/inicio.html",datosSesion)
     else:
         mensaje="Debe iniciar sesión"
@@ -263,7 +264,7 @@ def asistenteInicio(request):
 
 def asistenteSolicitudes(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
         return render(request,"asistente/solicitudes.html",datosSesion)
     else:
         mensaje="Debe iniciar sesión"
@@ -271,7 +272,8 @@ def asistenteSolicitudes(request):
 
 def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"materiales":Material.objects.all(),"user":request.user}
+        retorno = {"materiales":Material.objects.all(),"user":request.user,
+                   "rol":request.user.groups.get().name}
         return render(request,"administrador/vistaGestionarMateriales.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -279,7 +281,8 @@ def vistaGestionarMateriales(request):
     
 def vistaRegistrarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"unidadesMedidas":UnidadMedida.objects.all(),"estadoElemento":estadosElementos,"user":request.user}
+        retorno = {"unidadesMedidas":UnidadMedida.objects.all(),"estadoElemento":estadosElementos,"user":request.user,
+                   "rol":request.user.groups.get().name}
         return render(request, "asistente/frmRegistrarMateriales.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -337,7 +340,7 @@ def registrarMaterial(request):
 
 def inicioInstructor(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
         return render(request,"instructor/inicio.html",datosSesion)
     else:
         mensaje="Debe iniciar sesión"
@@ -350,6 +353,8 @@ def vistaRegistrarEntradaMaterial(request):
             "unidadesMedida": UnidadMedida.objects.all(),
             "usuarios": User.objects.all(),
             "proveedores": Proveedor.objects.all(),
+            "user":request.user,
+            "rol":request.user.groups.get().name,
         }
         return render(request, 'asistente/frmRegistrarEntradaMaterial.html',retorno)
     else:
