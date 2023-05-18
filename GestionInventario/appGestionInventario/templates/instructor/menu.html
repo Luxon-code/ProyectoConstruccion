@@ -15,8 +15,8 @@
           <li class="nav-item dropdown" style="margin-right: 20px; margin-top:0.2rem;">          
             <select id="cbRolMenu" name="cbRolMenu" class="form-control custom-select verdeSena" style="border:none; color:white;cursor: pointer;">
                   {% if rol == 'Administrador' %}                 
-                    <option value="Administrador" class="verdeSena" selected>Administrador</option>
-                    <option value="Instructor"class="verdeSena">Instructor</option>
+                    <option value="Administrador" class="verdeSena">Administrador</option>
+                    <option value="Instructor"class="verdeSena" selected>Instructor</option>
                     <option value="Asistente"class="verdeSena">Asistente</option>
                   {%else %}
                       <option value="{{rol}}"class="verdeSena">{{rol}}</option>

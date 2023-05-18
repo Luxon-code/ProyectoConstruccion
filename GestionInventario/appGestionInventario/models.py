@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-
+from django.utils import timezone
 # Create your models here.
 estadosMantenimiento = [
     ('Satisfactorio','Satisfactorio'),('Requiere Ajuste','Requiere Ajuste'),
@@ -102,8 +102,6 @@ class Devolutivo(models.Model):
 class Material(models.Model):
     matReferencia = models.TextField(null=True,db_comment="Referencia o descripción del material")
     matMarca = models.CharField(max_length=50, null=True,db_comment="Marca del material si tiene")
-    matUnidadMedida = models.ForeignKey(UnidadMedida,on_delete=models.PROTECT,
-                                        db_comment="Hace referencia a la Unidad de Medida FK")
     matElemento = models.ForeignKey(Elemento,on_delete=models.PROTECT,db_comment="Hace referencia al Elemento FK")
     fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
     fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
@@ -115,7 +113,7 @@ class EntradaMaterial(models.Model):
     entNumeroFactura = models.CharField(max_length=15,db_comment="Número de la factura")
     entUsuarioRecibe = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,
                                          db_comment="Hace referencia a usuario de construcción que recibe")
-    entFechaHora = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora que entregan los elementos")
+    entFechaHora = models.DateTimeField(default=timezone.now(),db_comment="Fecha y hora que entregan los elementos")
     entEntregadoPor = models.CharField(max_length=100,db_comment="Nombre persona que entrega los materiales")
     entObservaciones = models.TextField(null=True,db_comment="Observaciones que se requieran hacer")
     entProveedor = models.ForeignKey(Proveedor,on_delete=models.PROTECT,
@@ -132,8 +130,10 @@ class DetalleEntradaMaterial(models.Model):
     detMaterial = models.ForeignKey(Material, on_delete=models.PROTECT,
                         db_comment="Hace referencia al material que se está registrando en la entrada")
     detCantidad=models.IntegerField(db_comment="Cantidad que ingresa del material")
+    detUnidadMedida = models.ForeignKey(UnidadMedida,on_delete=models.PROTECT,default=None,
+                                        db_comment="Hace referencia a la Unidad de Medida FK")
     detPrecioUnitario = models.IntegerField(db_comment="Precio del material que ingresa")
-    devEstado = models.CharField(max_length=7,choices=estadosElementos,db_comment="estado del Elemento")
+    detEstado = models.CharField(max_length=7,choices=estadosElementos,db_comment="estado del Elemento")
     fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
     fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
     

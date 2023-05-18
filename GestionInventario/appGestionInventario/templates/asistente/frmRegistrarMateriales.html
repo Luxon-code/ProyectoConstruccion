@@ -13,13 +13,13 @@
             <h3 class="text-center fw-bold">REGISTRAR ELEMENTOS MATERIALES</h3>
             <br>
             <div class="form-group row">
-                <div class="mb-3 col-lg-6">
+                <div class="mb-3 col-lg-4">
                     <label for="txtNombre" class="fw-bold">Nombre del elemento:</label>
                     <input type="text" name="txtNombre" class="form-control" id="txtNombre" placeholder="Nombre del elemento" required
                     value=""> 
                     <div class="invalid-feedback">Por favor ingrese el nombre del elemento</div>
                 </div>
-                <div class="mb-3 col-lg-6">
+                <div class="mb-3 col-lg-4">
                     <label for="cbEstado" class="fw-bold">Estado del elemento:</label>              
                     <select name="cbEstado" id="cbEstado" class="form-select" required>
                         <option value="">Seleccione</option>
@@ -29,22 +29,10 @@
                     </select>
                     <div class="invalid-feedback">Por favor eliga un estado</div>
                 </div>
-            </div>
-            <div class="form-group row">                
-                <div class="mb-3 col-lg-6">  
+                <div class="mb-3 col-lg-4">  
                     <label for="txtMarca" class="fw-bold">Marca: (*opcional)</label>
                     <input type="text" name="txtMarca" class="form-control" id="txtMarca" placeholder="Marca del elemento"
                     value=""> 
-                </div>
-                <div class="mb-3 col-lg-6">
-                    <label for="cbUnidadMedida" class="fw-bold">Unidad de medida:</label>              
-                    <select name="cbUnidadMedida" id="cbUnidadMedida" class="form-select" required>
-                        <option value="">Seleccione</option>
-                            {% for unidadMedida in unidadesMedidas %}
-                                <option value="{{unidadMedida.id}}">{{unidadMedida.uniNombre}}</option>
-                            {% endfor %}
-                    </select>
-                    <div class="invalid-feedback">Por favor eliga una unidad de medida</div>
                 </div>
             </div>
             <div class="form-group row">

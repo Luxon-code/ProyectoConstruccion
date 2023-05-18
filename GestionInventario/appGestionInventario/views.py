@@ -13,6 +13,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 import threading
 from smtplib import SMTPException
+from django.http import JsonResponse
 # Create your views here.
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -163,6 +164,7 @@ def SolicitarElementos(request):
     json = {
         "elementos": elementos,
         "materiales": materiales,
+        "rol":request.user.groups.get().name,
     }
     return render(request, "instructor/solicitarElementos.html", json)
 
@@ -185,7 +187,7 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
 def vistaGestionarElementos(request):
     if request.user.is_authenticated:
         retorno = {"devolutivos":Devolutivo.objects.all(),"user":request.user,"rol":request.user.groups.get().name}
-        return render(request,"administrador/vistaGestionarElementos.html",retorno)
+        return render(request,"asistente/vistaGestionarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
@@ -194,7 +196,7 @@ def vistaRegistrarElementos(request):
     if request.user.is_authenticated:
         retorno = {"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user,
                    "rol":request.user.groups.get().name}
-        return render(request,"administrador/frmRegistrarElementos.html",retorno)
+        return render(request,"asistente/frmRegistrarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
@@ -252,7 +254,7 @@ def registrarElementos(request):
         mensaje=f"{error}"
     retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,
                "estadoElemento":estadosElementos,"ubicacionFisica":ubicacion}
-    return render(request,"administrador/frmRegistrarElementos.html",retorno)
+    return render(request,"asistente/frmRegistrarElementos.html",retorno)
 
 def asistenteInicio(request):
     if request.user.is_authenticated:
@@ -274,14 +276,14 @@ def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
         retorno = {"materiales":Material.objects.all(),"user":request.user,
                    "rol":request.user.groups.get().name}
-        return render(request,"administrador/vistaGestionarMateriales.html",retorno)
+        return render(request,"asistente/vistaGestionarMateriales.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
     
 def vistaRegistrarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"unidadesMedidas":UnidadMedida.objects.all(),"estadoElemento":estadosElementos,"user":request.user,
+        retorno = {"estadoElemento":estadosElementos,"user":request.user,
                    "rol":request.user.groups.get().name}
         return render(request, "asistente/frmRegistrarMateriales.html",retorno)
     else:
@@ -297,7 +299,6 @@ def registrarMaterial(request):
         #datos del elemento material
         referencia = request.POST.get('txtReferencia',None)
         marca = request.POST.get('txtMarca',None)
-        unidadMedida = request.POST['cbUnidadMedida']
         #datos de la ubucacion fisica
         deposito = request.POST['txtDesposito']
         estante = request.POST.get('txtEstante',False)
@@ -323,10 +324,8 @@ def registrarMaterial(request):
                                         ubiLocker=loker)
             #registrar en la base de datos la ubicación física del elemento
             ubicacion.save()
-            #buscar el objeto unidad medida
-            UMedida = UnidadMedida.objects.get(pk=unidadMedida)
             #crear el objeto Material
-            material = Material(matReferencia = referencia,matMarca=marca,matUnidadMedida=UMedida,matElemento=elemento)
+            material = Material(matReferencia = referencia,matMarca=marca,matElemento=elemento)
             material.save()
             estado = True
             mensaje =f"Elemento Material registrado Satisfactoriamente con el codigo {codigoElemento}" 
@@ -360,3 +359,40 @@ def vistaRegistrarEntradaMaterial(request):
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def registrarEntradaMaterial(request):
+    if request.method == "POST":
+        estado = False
+        try:
+            with transaction.atomic():
+                codigoFactura = request.POST['codigoFactura']
+                entregadoPor = request.POST['entregadoPor']
+                idProveedor = int(request.POST['proveedor'])
+                recibidoPor = int(request.POST['recibidoPor'])
+                fechaHora = request.POST('fechaHora',None)
+                observaciones = request.POST['observaciones']
+                userRecibe = User.objects.get(pk=recibidoPor)
+                proveedor = Proveedor.objects.get(pk=idProveedor)
+                entradaMaterial = EntradaMaterial(entNumeroFactura=codigoFactura,entFechaHora=fechaHora,
+                                                  entUsuarioRecibe=userRecibe,entEntregadoPor=entregadoPor,
+                                                  entProveedor=proveedor,entObservaciones=observaciones)
+                entradaMaterial.save()
+                detalleMateriales = json.loads(request.POST['detalle'])
+                for detalle in detalleMateriales:
+                    material = Material.objects.get(pk=int(detalle['idMaterial']))
+                    cantidad = int(detalle['cantidad'])
+                    precio = int(detalle['precio'])
+                    estado = detalle['estado']
+                    unidadMedida = UnidadMedida.objects.get(pk=int(detalle['idUnidadMedida']))
+                    detalleEntradaMaterial = DetalleEntradaMaterial(detEntradaMaterial=entradaMaterial,
+                                                                    detMaterial=material,detUnidadMedida=unidadMedida,
+                                                                    detCantidad=cantidad,detPrecioUnitario=precio,
+                                                                    detEstado=estado)
+                    detalleEntradaMaterial.save()
+                estado=True
+                mensaje = "Se ha registrado la entrada de materiales correctamente"
+        except Error as error:
+            transaction.rollback()
+            mensaje = f"{error}"
+        retorno = {"estado": estado, "mensaje":mensaje}
+        return JsonResponse(retorno)

@@ -15,9 +15,9 @@
           <li class="nav-item dropdown" style="margin-right: 20px; margin-top:0.2rem;">          
             <select id="cbRolMenu" name="cbRolMenu" class="form-control custom-select verdeSena" style="border:none; color:white;cursor: pointer;">
                   {% if rol == 'Administrador' %}                 
-                    <option value="Administrador" class="verdeSena" select>Administrador</option>
+                    <option value="Administrador" class="verdeSena">Administrador</option>
                     <option value="Instructor"class="verdeSena">Instructor</option>
-                    <option value="Asistente"class="verdeSena">Asistente</option>
+                    <option value="Asistente"class="verdeSena" selected>Asistente</option>
                   {%else %}
                     <option value="{{rol}}"class="verdeSena">{{rol}}</option>
                   {% endif %}
@@ -27,8 +27,10 @@
             <a class="nav-link" href="/inicioAsistente/">Inicio</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestionar Materiales</a>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestionar Elementos</a>
             <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/vistaGestionarElementos/">Gestionar Devolutivos</a></li>
+              <li><a class="dropdown-item" href="/vistaGestionarMateriales/">Ver Materiales</a></li>     
               <li><a class="dropdown-item" href="/vistaRegistrarMateriales/">Registrar Material</a></li>
               <li><a class="dropdown-item" href="/vistaRegistrarEntradaMaterial/">Entrada Material</a></li>            
             </ul>
