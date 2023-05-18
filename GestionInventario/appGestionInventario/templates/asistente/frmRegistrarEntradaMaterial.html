@@ -1,0 +1,181 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+{% load static%}
+
+<script src="{%static '../static/js/material.js' %}"></script>
+<br>
+    {% for material in materiales %}
+        <script> cargarMateriales("{{material.id}}","{{material.matElemento.eleCodigo}}","{{material.matElemento.eleNombre}}");</script>
+    {% endfor %}
+    
+    {% for unidad in unidadesMedida %}
+        <script> cargarUnidadesMedida("{{unidad.id}}","{{unidad.uniNombre}}");</script>
+    {% endfor %}
+   
+    <h3 class="text-center fw-bold">REGISTRAR ENTRADA DE MATERIALES</h3>
+    <div class="w-75" style="height: 100%; margin-bottom: 8rem;">                   
+        <div id="datosGenerales">
+            <div class="form-group row">
+                
+                <div class="col-lg-2 mb-3">                                    
+                    <label for="txtFactura" class="fw-bold">Código Factura:</label>
+                    <input type="number" name="txtFactura" value="1" id="txtFactura" class="form-control" required>           
+                </div> 
+                <div class="col-lg-6 mb-3">
+                    <label for="txtEntregadoPor" class="fw-bold">Entregado Por:</label>
+                    <input type="text" name="txtEntregadoPor" id="txtEntregadoPor" class="form-control" required> 
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <label for="cbProveedor" class="fw-bold">Proveedor:</label>
+                    <select name="cbProveedor" id="cbProveedor" class="form-select">
+                        <option value="">Seleccione</option>
+                        {% for proveedor in proveedores %}
+                            <option value="{{proveedor.id}}">{{proveedor.proNombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>                                                              
+            </div>   
+            <div class="form-group row">                                
+                
+                <div class="col-lg-12 mb-3">
+                    <label for="cbRecibidoPor" class="fw-bold">Recibido Por:</label>
+                    <select name="cbRecibidoPor" id="cbRecibidoPor" class="form-select">
+                        <option value="">Seleccione</option>
+                        {% for usuario in usuarios %}
+                           {% if usuario.username != 'admin' %}
+                            <option value="{{usuario.id}}">{{usuario.first_name}} {{usuario.last_name}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>  
+            <div class="form-group">                        
+                <button type="button" id="btnAbrirModalAnexarMaterial" class="btn btn-secondary" 
+                data-bs-toggle="modal" data-bs-target="#modalMaterial">
+                    Anexar Material
+                  </button>     
+            </div>
+        </div>
+        <hr class="text-secondary fw-bold">
+        <h3 class="text-center fw-bold">Detalle Entrada Materiales</h3>
+        <div id="vistaTablaMateriales w-75 table-responsive" style="margin: 0 auto">
+            <table class="table table-bordered table-stripped">
+                <thead>
+                    <tr class="bg-secondary text-white text-center">
+                        <th>Código</th>
+                        <th>Material</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Unidad Medida</th>
+                        <th>Estado</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="datosTablaMateriales">
+                    
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-secondary mt-5" id="btnRegistrarDetalle" style="margin: 0 auto">Finalizar Registro</button> 
+        </div>                      
+        
+        <!-- The Modal -->
+        <div class="modal" id="modalMaterial">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+        
+                <!-- Modal Header -->
+                <div class="modal-header tituloModal">
+                    <h4 class="modal-title">Entrada Material</h4>
+                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+                </div>
+        
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form id="frmEntradaMaterial" action="">
+                        <div class="form-group row">                                                          
+                            <div class="col-lg-12 mb-3">                                    
+                                <label for="cbMaterial" class="fw-bold">Material:</label>
+                                <select name="cbMaterial" id="cbMaterial" class="form-select">
+                                    <option value="">Seleccione</option>
+                                    {% for material in materiales %}
+                                        <option value="{{material.id}}">{{material.matElemento.eleCodigo}}-{{material.matElemento.eleNombre}}</option>
+                                    {% endfor %}
+                                    
+                                </select>               
+                            </div>       
+                           <!-- <div class="col-lg-6 mb-3">
+                                <label>Ingrese Nombre Material
+                                    <input list="materiales" name="txtMaterial" class="form-control" /></label>
+                                    <datalist id="materiales">
+                                        {% for material in materiales %}
+                                        <option value="{{material.matElemento.eleCodigo}}">{{material.matElemento.eleCodigo}}-{{material.matElemento.eleNombre}}</option>
+                                        {% endfor %}
+                                      
+                                    </datalist>
+                            </div>-->
+                                                
+                        </div>  
+                        <div class="form-group row">
+                            <div class="col-lg-3 mb-3">
+                                <label for="txtCantidad" class="fw-bold">Cantidad:</label>
+                                <input type="number" name="txtCantidad" id="txtCantidad" class="form-control">      
+                            </div>
+                            <div class="col-lg-3 mb-3">                                   
+                                <label for="txtPrecio" class="fw-bold">Precio Unitario:</label>
+                                <input type="number" name="txtPrecio" id="txtPrecio" class="form-control">                        
+                            </div> 
+                            <div class="col-lg-3 mb-3">
+                                <label for="cbUnidadMedida" class="fw-bold">Unidad:</label>
+                                <select name="cbUnidadMedida" id="cbUnidadMedida" class="form-select">
+                                    <option value="">Seleccione</option>
+                                    {% for unidad in unidadesMedida %}
+                                        <option value="{{unidad.id}}">{{unidad.uniNombre}}</option>
+                                    {% endfor %}
+                                </select>                           
+                            </div>
+                            <div class="col-lg-3 mb-3">
+                                <label for="cbEstado" class="fw-bold">Estado:</label>
+                                <select name="cbEstado" id="cbEstado" class="form-select">
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                                                
+                        </div>                                       
+                        <div class="form-group row">                                             
+                            <div class="col-lg-12 mb-3">
+                                <label for="txtObservaciones" class="fw-bold">Observaciones:</label>
+                                <textarea name="txtObservaciones" id="txtObservaciones" cols="30" rows="5" class="form-control" ></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+        
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btnAgregarMaterialDetalle" data-bs-dismiss="modal">Add Detalle</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+        
+            </div>
+            </div>
+        </div>       
+                                     
+       
+    </div>
+<br>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}

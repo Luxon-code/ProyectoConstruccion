@@ -1,5 +1,16 @@
 $(function(){
     $("#fileFoto").on("change",mostrarImagen);
+    $("#cbRolMenu").change(function(){
+        if($("#cbRolMenu").val()=="Instructor"){
+            location.href="/inicioInstructor/";
+        } 
+        if($("#cbRolMenu").val()=="Administrador"){
+            location.href="/inicioAdministrador/";
+        }
+        if($("#cbRolMenu").val()=="Asistente"){
+            location.href="/inicioAsistente/";
+        }
+    })
 })
 /**
  * A partir de la selección de una 

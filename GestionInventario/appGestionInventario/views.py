@@ -21,7 +21,7 @@ def inicio(request):
 
 def inicioAdministrador(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
         return render(request,"administrador/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
@@ -30,7 +30,7 @@ def inicioAdministrador(request):
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
         roles = Group.objects.all()
-        retorno = {"roles":roles,"user":request.user}
+        retorno = {"roles":roles,"user":request.user,"rol":request.user.groups.get().name}
         return render(request, "administrador/frmRegistrarUsuario.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -104,7 +104,7 @@ def generarPassword():
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
         usuarios=User.objects.all()
-        retorno = {"usuarios":usuarios,"user":request.user}
+        retorno = {"usuarios":usuarios,"user":request.user,"rol":request.user.groups.get().name}
         return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -184,7 +184,7 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
 
 def vistaGestionarElementos(request):
     if request.user.is_authenticated:
-        retorno = {"devolutivos":Devolutivo.objects.all(),"user":request.user}
+        retorno = {"devolutivos":Devolutivo.objects.all(),"user":request.user,"rol":request.user.groups.get().name}
         return render(request,"administrador/vistaGestionarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -192,7 +192,8 @@ def vistaGestionarElementos(request):
     
 def vistaRegistrarElementos(request):
     if request.user.is_authenticated:
-        retorno = {"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user}
+        retorno = {"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user,
+                   "rol":request.user.groups.get().name}
         return render(request,"administrador/frmRegistrarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -249,12 +250,13 @@ def registrarElementos(request):
     except Error as error:
         transaction.rollback()
         mensaje=f"{error}"
-    retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,"estadoElemento":estadosElementos}
+    retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,
+               "estadoElemento":estadosElementos,"ubicacionFisica":ubicacion}
     return render(request,"administrador/frmRegistrarElementos.html",retorno)
 
 def asistenteInicio(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
         return render(request, "asistente/inicio.html",datosSesion)
     else:
         mensaje="Debe iniciar sesión"
@@ -262,7 +264,7 @@ def asistenteInicio(request):
 
 def asistenteSolicitudes(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
         return render(request,"asistente/solicitudes.html",datosSesion)
     else:
         mensaje="Debe iniciar sesión"
@@ -270,8 +272,91 @@ def asistenteSolicitudes(request):
 
 def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"materiales":Material.objects.all(),"user":request.user}
+        retorno = {"materiales":Material.objects.all(),"user":request.user,
+                   "rol":request.user.groups.get().name}
         return render(request,"administrador/vistaGestionarMateriales.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def vistaRegistrarMateriales(request):
+    if request.user.is_authenticated:
+        retorno = {"unidadesMedidas":UnidadMedida.objects.all(),"estadoElemento":estadosElementos,"user":request.user,
+                   "rol":request.user.groups.get().name}
+        return render(request, "asistente/frmRegistrarMateriales.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def registrarMaterial(request):
+    estado = False
+    try:
+        #datos del elemento en general
+        nombreEle = request.POST['txtNombre']
+        estadoEle = request.POST['cbEstado']
+        #datos del elemento material
+        referencia = request.POST.get('txtReferencia',None)
+        marca = request.POST.get('txtMarca',None)
+        unidadMedida = request.POST['cbUnidadMedida']
+        #datos de la ubucacion fisica
+        deposito = request.POST['txtDesposito']
+        estante = request.POST.get('txtEstante',False)
+        if estante == "":
+            estante = 0
+        entrepaño = request.POST.get('txtEntrepaño',False)
+        if entrepaño == "":
+            entrepaño = 0
+        loker = request.POST.get('txtLoker',False)
+        if loker == "":
+            loker = 0
+        with transaction.atomic():
+            #obtener cuantos elementos se han registrado    
+            cantidad = Elemento.objects.all().filter(eleTipo="MAT").count()
+            #crear un codigo a partir de la cantidad, ajustando 0 al inicio
+            codigoElemento = "MAT" + str(cantidad+1).rjust(5, '0')
+            #crear el elemento
+            elemento = Elemento(eleCodigo = codigoElemento,eleNombre=nombreEle,eleTipo="MAT",eleEstado=estadoEle)
+            #salvar el elemento en la base de datos
+            elemento.save()
+            #crear objeto ubicación física del elemento
+            ubicacion = UbicacionFisica(ubiElemento = elemento,ubiDeposito =deposito,ubiEstante=estante,ubiEntrepano=entrepaño,
+                                        ubiLocker=loker)
+            #registrar en la base de datos la ubicación física del elemento
+            ubicacion.save()
+            #buscar el objeto unidad medida
+            UMedida = UnidadMedida.objects.get(pk=unidadMedida)
+            #crear el objeto Material
+            material = Material(matReferencia = referencia,matMarca=marca,matUnidadMedida=UMedida,matElemento=elemento)
+            material.save()
+            estado = True
+            mensaje =f"Elemento Material registrado Satisfactoriamente con el codigo {codigoElemento}" 
+    except Error as error:
+        transaction.rollback()
+        mensaje=f"{error}"
+    retorno = {"mensaje":mensaje,"estado":estado,
+               "estadoElemento":estadosElementos,"unidadesMedidas":UnidadMedida.objects.all(),
+               "material":material,"ubicacionFisica":ubicacion}
+    return render(request,"asistente/frmRegistrarMateriales.html",retorno)
+
+def inicioInstructor(request):
+    if request.user.is_authenticated:
+        datosSesion={"user": request.user,"rol":request.user.groups.get().name}
+        return render(request,"instructor/inicio.html",datosSesion)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def vistaRegistrarEntradaMaterial(request):
+    if request.user.is_authenticated:
+        retorno = {
+            "materiales": Material.objects.all(),
+            "unidadesMedida": UnidadMedida.objects.all(),
+            "usuarios": User.objects.all(),
+            "proveedores": Proveedor.objects.all(),
+            "user":request.user,
+            "rol":request.user.groups.get().name,
+        }
+        return render(request, 'asistente/frmRegistrarEntradaMaterial.html',retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})

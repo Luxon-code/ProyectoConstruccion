@@ -1,10 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-dark verdeSena">
     <div class="container-fluid">
       <a class="navbar-brand" href="/inicioAdministrador/">
-        {% if user.userFoto != "" and user.userFoto != "False" %}
+        {% if user.userFoto != "False" %}
           <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
         {% else %}  
-          <img src="https://png.pngtree.com/png-vector/20190710/ourlarge/pngtree-user-vector-avatar-png-image_1541962.jpg" alt="No foto" style="width:40px;" class="rounded-pill">
+          <img src="../media/user-logo.png" alt="No foto" style="width:40px;" class="rounded-pill">
         {% endif %}
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -12,6 +12,13 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
+          <li class="nav-item dropdown" style="margin-right: 20px; margin-top:0.2rem;">          
+            <select id="cbRolMenu" name="cbRolMenu" class="form-control custom-select verdeSena" style="border:none; color:white;cursor: pointer;">                
+                    <option value="Administrador" class="verdeSena" select>Administrador</option>
+                    <option value="Instructor"class="verdeSena">Instructor</option>
+                    <option value="Asistente"class="verdeSena">Asistente</option>
+            </select>
+          </li>
           <li class="nav-item">
             <a class="nav-link" aria-current="page" href="/admin/">Administrador</a>
           </li>
@@ -26,7 +33,7 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/vistaLogin/">Gestionar Solicitudes</a>
+            <a class="nav-link" href="#">Gestionar Solicitudes</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/salir/">Salir</a>

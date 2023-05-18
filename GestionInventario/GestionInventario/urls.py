@@ -23,7 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.inicio),
     path('inicioAdministrador/',views.inicioAdministrador),
-    path('inicioAsistente',views.asistenteInicio),
+    path('inicioAsistente/',views.asistenteInicio),
+    path('inicioInstructor/',views.inicioInstructor),
     path('vistaRegistrarUsuario/',views.vistaRegistrarUsuario),
     path('registrarUsuario/',views.registrarUsuario),
     path('vistaGestionarUsuarios/',views.vistaGestionarUsuarios),
@@ -34,8 +35,11 @@ urlpatterns = [
     path('vistaGestionarElementos/',views.vistaGestionarElementos),
     path('vistaRegistrarElementos/',views.vistaRegistrarElementos),
     path('registrarElemento/',views.registrarElementos),
-    path('asistente/vistaSolicitudes/',views.asistenteSolicitudes),
+    path('vistaSolicitudes/',views.asistenteSolicitudes),
     path('vistaGestionarMateriales/',views.vistaGestionarMateriales),
+    path('vistaRegistrarMateriales/',views.vistaRegistrarMateriales),
+    path('registrarMaterial/',views.registrarMaterial),
+    path('vistaRegistrarEntradaMaterial/',views.vistaRegistrarEntradaMaterial),
 ]
 
 if settings.DEBUG:

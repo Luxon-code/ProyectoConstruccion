@@ -1,20 +1,10 @@
-{% load static %}
-
 <nav class="navbar navbar-expand-lg navbar-dark verdeSena">
     <div class="container-fluid">
-<<<<<<< HEAD
-      <a class="navbar-brand" href="/inicioAdministrador/">
-        {% if user.userFoto != "" and user.userFoto != "False" %}
-          <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
-        {% else %}  
-          <img src="{% static 'img/NoFoto.jpg' %}" alt="No foto" style="width:40px;" class="rounded-pill">
-=======
       <a class="navbar-brand" href="#">
         {% if user.userFoto != "False" %}
           <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
         {% else %}  
           <img src="../media/user-logo.png" alt="No foto" style="width:40px;" class="rounded-pill">
->>>>>>> 80460e4b276b4071dc53af9669547eca3c295a55
         {% endif %}
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,29 +15,22 @@
           <li class="nav-item dropdown" style="margin-right: 20px; margin-top:0.2rem;">          
             <select id="cbRolMenu" name="cbRolMenu" class="form-control custom-select verdeSena" style="border:none; color:white;cursor: pointer;">
                   {% if rol == 'Administrador' %}                 
-                    <option value="Administrador" class="verdeSena" select>Administrador</option>
+                    <option value="Administrador" class="verdeSena" selected>Administrador</option>
                     <option value="Instructor"class="verdeSena">Instructor</option>
                     <option value="Asistente"class="verdeSena">Asistente</option>
                   {%else %}
-                    <option value="{{rol}}"class="verdeSena">{{rol}}</option>
+                      <option value="{{rol}}"class="verdeSena">{{rol}}</option>
                   {% endif %}
             </select>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/inicioAsistente/">Inicio</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestionar Materiales</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/vistaRegistrarMateriales/">Registrar Material</a></li>
-              <li><a class="dropdown-item" href="/vistaRegistrarEntradaMaterial/">Entrada Material</a></li>            
-            </ul>
+            <a class="nav-link" href="/inicioInstructor/">Inicio</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/vistaSolicitudes/">Ver solicitudes</a>
+            <a class="nav-link" href="/solicitarElementos/">Solicitar Elementos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Reportes</a>
+            <a class="nav-link" href="#">Ver mis solicitudes</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/salir/">Salir</a>
