@@ -15,21 +15,24 @@
   <div>
     <form class="d-flex">
       <!-- Button to open the offcanvas sidebar -->
-      <button class="btn btn-primary me-2 col-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
+      <button class="btn btn-primary me-2 col-2 col-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
         Ver Elementos
       </button>
-      <input class="form-control me-2" type="text" placeholder="Search" list="elementos">
-      <button class="btn btn-primary col-1" type="button">Agregar</button>
+      <input class="form-control me-2" type="text" placeholder="Search" list="elementos" id="inputElemento">
+      <button class="btn btn-primary col-1" type="button" onclick="addElement()">Agregar</button>
       <datalist id="elementos">
-        {% for e in elementos %}
-        <option value="{{e.eleNombre}}"></option>
+        {% for d in devolutivos %}
+        <option value="{{d.devElemento.eleCodigo}}">{{d.devElemento.eleNombre}}</option>
+        {% endfor %}
+        {% for m in materiales %}
+        <option value="{{m.matElemento.eleCodigo}}">{{m.matElemento.eleNombre}}</option>
         {% endfor %}
       </datalist>
     </form>
   </div>
-  <div class="row justify-content-center align-items-center g-2 my-1">
+  <div class="row justify-content-center align-items-center g-2 my-1 detalleElementos">
     {% for e in elementos %}
-    <div class="col">
+    <div class="col-sm">
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">{{e.eleNombre}}</h4>
@@ -70,15 +73,22 @@
       <input class="form-control me-2 w-75" type="text" placeholder="Search" list="elementos">
       <button class="btn btn-primary w-25" type="button">Search</button>
     </div>
-    {% for e in elementos %}
+    {% for d in devolutivos %}
     <div class="card my-1">
       <div class="card-body d-flex align-items-center justify-content-between">
-        <p class="card-text">{{e.eleNombre}}</p>
-        <button class="btn btn-primary">Add</button>
+        <p class="card-text">{{d.devElemento.eleNombre}}</p>
+        <button class="btn btn-primary" onclick="addElement('{{d.devElemento.eleCodigo}}')">Add</button>
       </div>
     </div>
     {% endfor %}
-    <button class="btn btn-secondary" type="button">A Button</button>
+    {% for m in materiales %}
+    <div class="card my-1">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <p class="card-text">{{m.matElemento.eleNombre}}</p>
+        <button class="btn btn-primary" onclick="addElement('{{m.matElemento.eleCodigo}}')">Add</button>
+      </div>
+    </div>
+    {% endfor %}
   </div>
 </div>
 

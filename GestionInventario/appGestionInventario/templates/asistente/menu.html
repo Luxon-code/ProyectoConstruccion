@@ -2,19 +2,11 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark verdeSena">
     <div class="container-fluid">
-<<<<<<< HEAD
-      <a class="navbar-brand" href="/inicioAdministrador/">
-        {% if user.userFoto != "" and user.userFoto != "False" %}
-          <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
-        {% else %}  
-          <img src="{% static 'img/NoFoto.jpg' %}" alt="No foto" style="width:40px;" class="rounded-pill">
-=======
       <a class="navbar-brand" href="#">
         {% if user.userFoto != "False" %}
           <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
         {% else %}  
           <img src="../media/user-logo.png" alt="No foto" style="width:40px;" class="rounded-pill">
->>>>>>> 80460e4b276b4071dc53af9669547eca3c295a55
         {% endif %}
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

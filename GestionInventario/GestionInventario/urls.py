@@ -41,6 +41,7 @@ urlpatterns = [
     path('registrarMaterial/',views.registrarMaterial),
     path('vistaRegistrarEntradaMaterial/',views.vistaRegistrarEntradaMaterial),
     path('registrarEntradaMaterial/',views.registrarEntradaMaterial),
+    path('elemento/<str:codigo>', views.getElemento)
 ]
 
 if settings.DEBUG:

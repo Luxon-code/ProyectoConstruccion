@@ -158,11 +158,11 @@ def salir(request):
                   {"mensaje":"Ha cerrado la sesión"})
 
 def SolicitarElementos(request):
-    elementos = Elemento.objects.all()
+    devolutivos = Devolutivo.objects.all()
     materiales = Material.objects.all()
     
     json = {
-        "elementos": elementos,
+        "devolutivos": devolutivos,
         "materiales": materiales,
         "rol":request.user.groups.get().name,
     }
@@ -396,3 +396,38 @@ def registrarEntradaMaterial(request):
             mensaje = f"{error}"
         retorno = {"estado": estado, "mensaje":mensaje}
         return JsonResponse(retorno)
+    
+def getElemento(request, codigo):
+    elemento = devolutivoOrMaterial(codigo)
+    
+    if elemento.__class__.__name__ == "Devolutivo":
+        retorno = {
+            "codigo" : elemento.devElemento.eleCodigo,
+            "nombre" : elemento.devElemento.eleNombre,
+            "tipo" : elemento.devElemento.eleTipo,
+        }
+    elif elemento.__class__.__name__ == "Material":
+        retorno = {
+            "codigo" : elemento.matElemento.eleCodigo,
+            "nombre" : elemento.matElemento.eleNombre,
+            "tipo" : elemento.matElemento.eleTipo,
+        }
+    else:
+        retorno = {
+            "Error" : elemento
+        }
+        
+    return JsonResponse(retorno)
+
+def devolutivoOrMaterial(codigo):
+    elemento = Elemento.objects.get(eleCodigo = codigo)
+    
+    if "MAT" in codigo:
+        material = Material.objects.get(matElemento = elemento)
+        return material
+    elif "MAQ" in codigo or "HER" in codigo or "EQU" in codigo:
+        devolutivo = Devolutivo.objects.get(devElemento = elemento)
+        return devolutivo
+    else:
+        mensaje = "No existe ese material"
+        return mensaje
