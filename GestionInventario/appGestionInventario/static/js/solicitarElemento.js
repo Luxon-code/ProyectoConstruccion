@@ -20,7 +20,7 @@ function getElements() {
                         <p class="card-text">${elemento.nombre}</p>
                         <p class="card-text">${elemento.descripcion != undefined ? elemento.descripcion : ""}</p>
                         </div>
-                        <button class="btn btn-primary" onclick="addElement('${elemento.codigo}')">Add</button>
+                        <button class="btn btn-primary" onclick="addElement('${elemento.codigo}')" data-bs-dismiss="offcanvas">Add</button>
                         </div>
                         </div>`
                 datalist += `<option value="${elemento.codigo}">${elemento.nombre}</option>`
@@ -40,12 +40,12 @@ function addElement(codigo) {
         });
     }
 
-    if (codigo == undefined){
+    if (codigo == undefined) {
         Swal.fire(
             'Campo Vacio',
             'Se necesita el elemento del codigo',
             'warning'
-          )
+        )
         return true
     }
 
@@ -56,17 +56,19 @@ function addElement(codigo) {
         .then(data => {
             let html = `<div class="col-sm" id="card${data.codigo}">
         <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">${data.nombre}</h4>
+            <div class="card-header d-flex justify-content-between">
+                <h4 class="card-title">${data.nombre}</h4>
+                <button type="button" class="btn-close"></button>
+            </div>
+            <div class="card-body">
             <p class="card-text">${tiposElementos[data.tipo]}</p>
-            ${data.cantidades == undefined ? "" : unidades(data.cantidades)}
-            <div class="d-flex">
-              <div class="input-group mb-3 w-50 me-1">
+            <div class="d-flex justify-content-center">
+              <div class="input-group mb-3 ${data.cantidades != undefined ? "w-50" : "w-75"} me-1">
                 <button class="btn btn-success" type="button" id="button-add" onclick="addCantidad('c${data.codigo}')">+</button>
                 <input type="number" class="form-control" id="c${data.codigo}" value="1" min="1">
                 <button class="btn btn-danger" type="button" onclick="loseCantidad('c${data.codigo}')">-</button>
               </div>
-              <button class="btn btn-danger mb-3 w-50">Borrar</button>
+              ${data.cantidades != undefined ? cantidades(data.cantidades) : ""}
             </div>
           </div>
         </div>
@@ -79,7 +81,7 @@ function addElement(codigo) {
                 'Codigo Erroneo',
                 'No existe ningun elemento con ese codigo',
                 'error'
-              )
+            )
         })
 }
 
@@ -91,12 +93,13 @@ function loseCantidad(codigo) {
     document.getElementById(codigo).value > 1 ? document.getElementById(codigo).value-- : document.getElementById(codigo).value = 1
 }
 
-function unidades(cantidades) {
+function cantidades(cantidades) {
     console.log(cantidades)
-    let html = ""
+    let html = `<select class="form-select w-50 mb-3" name="unidad">`
     cantidades.forEach(c => {
-        html += `<p class="card-text">${c.valor + c.unidad}</p>`
+        html += `<option value="${c.unidad}">${c.unidad}</option>`
     });
+    html += `</select>`
     return html
 }
 

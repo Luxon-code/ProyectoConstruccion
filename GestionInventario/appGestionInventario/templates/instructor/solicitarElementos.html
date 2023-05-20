@@ -42,11 +42,11 @@
         <h1 class="offcanvas-title">Todos Los Elementos</h1>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
     </div>
+    <div class="offcanvas-header">
+        <input class="form-control me-2 w-75" type="search" placeholder="Search" list="elementos" name="search">
+        <button class="btn btn-primary w-25" type="button" onclick="addElement()">Search</button>
+    </div>
     <div class="offcanvas-body">
-        <div class="d-flex">
-            <input class="form-control me-2 w-75" type="search" placeholder="Search" list="elementos" name="search">
-            <button class="btn btn-primary w-25" type="button" onclick="addElement()">Search</button>
-        </div>
         <div id="offcanvasElements">
 
         </div>
@@ -58,7 +58,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Datos De La Solicitud</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

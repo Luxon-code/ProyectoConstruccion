@@ -444,6 +444,7 @@ def getElemento(request, codigo):
             "codigo": elemento.matElemento.eleCodigo,
             "nombre": elemento.matElemento.eleNombre,
             "tipo": elemento.matElemento.eleTipo,
+            "cantidades": cantidades
         }
     else:
         retorno = {
@@ -496,3 +497,7 @@ def getElementos(request):
     }
 
     return JsonResponse(retorno)
+
+# def getFichas(request):
+#     fichas = Ficha.objects.all()
+    
