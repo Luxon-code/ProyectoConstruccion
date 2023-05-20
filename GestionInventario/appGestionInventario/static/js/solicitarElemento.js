@@ -99,4 +99,5 @@ function unidades(cantidades) {
     });
     return html
 }
+
 getElements()

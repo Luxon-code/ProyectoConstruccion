@@ -18,10 +18,8 @@ from django.http import JsonResponse
 # Create your views here.
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
-
 def inicio(request):
     return render(request, "inicio.html")
-
 
 def inicioAdministrador(request):
     if request.user.is_authenticated:
@@ -32,7 +30,6 @@ def inicioAdministrador(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
-
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
         roles = Group.objects.all()
@@ -42,7 +39,6 @@ def vistaRegistrarUsuario(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-
 
 def registrarUsuario(request):
     try:
@@ -96,7 +92,6 @@ def registrarUsuario(request):
     retorno = {"mensaje": mensaje}
     return render(request, "administrador/frmRegistrarUsuario.html", retorno)
 
-
 def generarPassword():
     """
     Genera un password de longitud de 10 que incluye letras mayusculas
@@ -114,7 +109,6 @@ def generarPassword():
         password += ''.join(random.choice(caracteres))
     return password
 
-
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
         usuarios = User.objects.all()
@@ -125,18 +119,8 @@ def vistaGestionarUsuarios(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
-
 def vistaLogin(request):
-    if request.user.is_authenticated:
-        if request.user.groups.filter(name='Administrador').exists():
-            return redirect('/inicioAdministrador')
-        elif request.user.groups.filter(name='Asistente').exists():
-            return redirect('/inicioAsistente')
-        else:
-            return redirect('/inicioInstructor')
-    else:
-        return render(request, "frmIniciarSesion.html")
-
+    return render(request, "frmIniciarSesion.html")
 
 def login(request):
     # validar el recapthcha
@@ -174,22 +158,18 @@ def login(request):
         mensaje = "Debe validar primero el recaptcha"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
-
 def salir(request):
     auth.logout(request)
     return render(request, "frmIniciarSesion.html",
                   {"mensaje": "Ha cerrado la sesión"})
 
-
 def SolicitarElementos(request):
-
     hoy = date.today()
     json = {
         "hoy": hoy.strftime("%Y-%m-%d"),
         "rol": request.user.groups.get().name,
     }
     return render(request, "instructor/solicitarElementos.html", json)
-
 
 def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
     remitente = settings.EMAIL_HOST_USER
@@ -208,19 +188,14 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
     except SMTPException as error:
         print(error)
 
-
 def vistaGestionarElementos(request):
     if request.user.is_authenticated:
-        retorno = {
-            "devolutivos": Devolutivo.objects.all(),
-            "user": request.user,
-            "rol": request.user.groups.get().name
-        }
+        retorno = {"devolutivos": Devolutivo.objects.all(
+        ), "user": request.user, "rol": request.user.groups.get().name}
         return render(request, "asistente/vistaGestionarElementos.html", retorno)
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-
 
 def vistaRegistrarElementos(request):
     if request.user.is_authenticated:
@@ -230,7 +205,6 @@ def vistaRegistrarElementos(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-
 
 def registrarElementos(request):
     estado = False
@@ -288,7 +262,6 @@ def registrarElementos(request):
                "estadoElemento": estadosElementos, "ubicacionFisica": ubicacion}
     return render(request, "asistente/frmRegistrarElementos.html", retorno)
 
-
 def asistenteInicio(request):
     if request.user.is_authenticated:
         datosSesion = {"user": request.user,
@@ -297,7 +270,6 @@ def asistenteInicio(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-
 
 def asistenteSolicitudes(request):
     if request.user.is_authenticated:
@@ -308,16 +280,14 @@ def asistenteSolicitudes(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
-
 def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"materiales": Material.objects.all(), "user": request.user,
+        retorno = {"materiales": DetalleEntradaMaterial.objects.all(), "user": request.user,
                    "rol": request.user.groups.get().name}
         return render(request, "asistente/vistaGestionarMateriales.html", retorno)
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-
 
 def vistaRegistrarMateriales(request):
     if request.user.is_authenticated:
@@ -327,7 +297,6 @@ def vistaRegistrarMateriales(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-
 
 def registrarMaterial(request):
     estado = False
@@ -378,7 +347,6 @@ def registrarMaterial(request):
                "material": material, "ubicacionFisica": ubicacion}
     return render(request, "asistente/frmRegistrarMateriales.html", retorno)
 
-
 def inicioInstructor(request):
     if request.user.is_authenticated:
         datosSesion = {"user": request.user,
@@ -387,7 +355,6 @@ def inicioInstructor(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-
 
 def vistaRegistrarEntradaMaterial(request):
     if request.user.is_authenticated:
@@ -404,25 +371,24 @@ def vistaRegistrarEntradaMaterial(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
-
 def registrarEntradaMaterial(request):
     if request.method == "POST":
         estado = False
         try:
             with transaction.atomic():
-                codigoFactura = request.POST['codigoFactura']
-                entregadoPor = request.POST['entregadoPor']
-                idProveedor = int(request.POST['proveedor'])
-                recibidoPor = int(request.POST['recibidoPor'])
-                fechaHora = request.POST('fechaHora', None)
-                observaciones = request.POST['observaciones']
+                codigoFactura = request.POST.get('codigoFactura')
+                entregadoPor = request.POST.get('entregadoPor')
+                idProveedor = int(request.POST.get('proveedor'))
+                recibidoPor = int(request.POST.get('recibidoPor'))
+                fechaHora = request.POST.get('fechaHora', None)
+                observaciones = request.POST.get('observaciones')
                 userRecibe = User.objects.get(pk=recibidoPor)
                 proveedor = Proveedor.objects.get(pk=idProveedor)
                 entradaMaterial = EntradaMaterial(entNumeroFactura=codigoFactura, entFechaHora=fechaHora,
                                                   entUsuarioRecibe=userRecibe, entEntregadoPor=entregadoPor,
                                                   entProveedor=proveedor, entObservaciones=observaciones)
                 entradaMaterial.save()
-                detalleMateriales = json.loads(request.POST['detalle'])
+                detalleMateriales = json.loads(request.POST.get('detalle'))
                 for detalle in detalleMateriales:
                     material = Material.objects.get(
                         pk=int(detalle['idMaterial']))
@@ -443,7 +409,6 @@ def registrarEntradaMaterial(request):
             mensaje = f"{error}"
         retorno = {"estado": estado, "mensaje": mensaje}
         return JsonResponse(retorno)
-
 
 def getElemento(request, codigo):
     elemento = devolutivoOrMaterial(codigo)
@@ -479,7 +444,6 @@ def getElemento(request, codigo):
             "codigo": elemento.matElemento.eleCodigo,
             "nombre": elemento.matElemento.eleNombre,
             "tipo": elemento.matElemento.eleTipo,
-            "cantidades": cantidades
         }
     else:
         retorno = {
@@ -487,7 +451,6 @@ def getElemento(request, codigo):
         }
 
     return JsonResponse(retorno)
-
 
 def devolutivoOrMaterial(codigo):
     elemento = Elemento.objects.get(eleCodigo=codigo)
@@ -505,7 +468,7 @@ def devolutivoOrMaterial(codigo):
 def getElementos(request):
     devolutivos = Devolutivo.objects.all()
     materiales = Material.objects.all()
-    
+
     elementos = []
     for devolutivo in devolutivos:
         elemento = {
@@ -515,9 +478,9 @@ def getElementos(request):
             "estado": devolutivo.devElemento.eleEstado,
             "descripcion": devolutivo.devDescripcion
         }
-        
+
         elementos.append(elemento)
-        
+
     for material in materiales:
         material = {
             "codigo": material.matElemento.eleCodigo,
@@ -525,11 +488,11 @@ def getElementos(request):
             "tipo": material.matElemento.eleTipo,
             "estado": material.matElemento.eleEstado
         }
-        
+
         elementos.append(material)
-    
+
     retorno = {
         "elementos": elementos
     }
-    
+
     return JsonResponse(retorno)
