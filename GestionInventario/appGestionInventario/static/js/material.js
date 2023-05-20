@@ -1,38 +1,74 @@
 let materiales = []
 let entradaMateriales = []
 let unidadesMedidas = []
-const csrftoken = getCookie('csrftoken')
 $(function () {
     $('#btnAgregarMaterialDetalle').click(function () {
-        agregarMaterialAlDetalle()
+        if(validarFrmEntradaMaterial()){
+            agregarMaterialAlDetalle()
+        }else{
+            Swal.fire("Entrada Material","Por favos ingrese todos los datos","info")
+        }
     })
     $('#btnRegistrarDetalle').click(function () {
-        registrarDetalleEntrada()
+        if(validarFrmDatosGenerales()){
+            if(entradaMateriales.length>0){
+                registrarDetalleEntrada()
+            }else{
+                Swal.fire("Registro Entrada Material","Por favor anexe minimo 1 material","info")
+            }
+        }else{
+            Swal.fire("Registro Entrada Material","Por favos ingrese todos los datos","info")
+        }
     })
 })
 
-function registrarDetalleEntrada(){
-    data = {
-        "codigoFactura": $('#txtFactura').val(),
-        "entregadoPor": $('#txtEntregadoPor').val(),
-        "proveedor": $('#cbProveedor').val(),
-        "recibidoPor": $('#cbRecibidoPor').val(),
-        "observaciones": $('#txtObservaciones').val(),
-        "fechaHora": $('#txtFecha').val(),
-        "detalle": JSON.stringify(entradaMateriales),
+function validarFrmDatosGenerales() {
+    if($('#txtFactura').val()==""||$('#txtEntregadoPor').val()==""||$('#cbProveedor').val()==""||
+    $('#cbRecibidoPor').val()==""||$('#txtFecha').val()==""){
+        return false;
+    }else{
+        return true;
     }
+}
+function validarFrmEntradaMaterial(){
+    if($('#cbMaterial').val()==""||$('#txtCantidad').val()==""||$('#txtPrecio').val()==""||
+    $('#cbUnidadMedida').val()==""|| $('#cbEstado').val()==""){
+        return false
+    }else{
+        return true
+    }
+}
+/**
+ * hace una peticion fetch para registrar el detalleEntradaMaterial y
+ * entradaMaterial en la base de datos
+ */
+function registrarDetalleEntrada(){
+    var data = new FormData();
+    data.append('codigoFactura',$('#txtFactura').val())
+    data.append('entregadoPor',$('#txtEntregadoPor').val())
+    data.append('proveedor',$('#cbProveedor').val())
+    data.append('recibidoPor', $('#cbRecibidoPor').val())
+    data.append('observaciones',$('#txtObservaciones').val())
+    data.append('fechaHora', $('#txtFecha').val())
+    data.append('detalle',JSON.stringify(entradaMateriales))
     var options = {
         method: "POST",
-        mode: "same-origin",
         body:data,
         headers: {
-            'X-CSRFToken': csrftoken,
+            'X-CSRFToken': getCookie('csrftoken'),
         }
     }
     fetch("/registrarEntradaMaterial/",options)
     .then(response => response.json())
     .then((data)=>{
-        console.log(data)
+        if(data.estado == true) {
+            frmDatosGenerales.reset()
+            entradaMateriales.length=0
+            mostrarDatosTabla()
+            Swal.fire("Entrada de Materiales",data.mensaje,"success")
+        }else{
+            Swal.fire("Entrada de Materiales",data.mensaje,"warning")
+        }
     })
     .catch((error)=>{
         console.log("Error al registrar Entrada Material.")

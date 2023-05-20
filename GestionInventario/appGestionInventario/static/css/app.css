@@ -1,7 +1,13 @@
 .verdeSena {
     background-color: rgb(57, 169, 0);
 }
-
+a{
+    color: rgb(70, 69, 69);
+}
+.icon:hover{
+    color: rgb(57, 169, 0);
+    cursor: pointer;
+}
 @media only screen and (min-width: 500px) {
     .detalleElementos {
         display: grid;
