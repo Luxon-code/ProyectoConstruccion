@@ -43,7 +43,7 @@
             </div>   
             <div class="form-group row">                                
                 
-                <div class="col-lg-12 mb-3">
+                <div class="col-lg-6 mb-3">
                     <label for="cbRecibidoPor" class="fw-bold">Recibido Por:</label>
                     <select name="cbRecibidoPor" id="cbRecibidoPor" class="form-select">
                         <option value="">Seleccione</option>
@@ -54,7 +54,17 @@
                         {% endfor %}
                     </select>
                 </div>
+                <div class="col-lg-6 mb-3">
+                    <label for="txtFecha" class="fw-bold">Fecha Entrega:</label>
+                    <input type="datetime-local" name="txtFecha" id="txtFecha" class="form-control" required> 
+                </div>
             </div>  
+            <div class="form-group row">                                             
+                <div class="col-lg-12 mb-3">
+                    <label for="txtObservaciones" class="fw-bold">Observaciones:</label>
+                    <textarea name="txtObservaciones" id="txtObservaciones" cols="30" rows="5" class="form-control" ></textarea>
+                </div>
+            </div>
             <div class="form-group">                        
                 <button type="button" id="btnAbrirModalAnexarMaterial" class="btn btn-secondary" 
                 data-bs-toggle="modal" data-bs-target="#modalMaterial">
@@ -74,7 +84,6 @@
                         <th>Precio</th>
                         <th>Unidad Medida</th>
                         <th>Estado</th>
-                        <th>Observaciones</th>
                     </tr>
                 </thead>
                 <tbody id="datosTablaMateriales">
@@ -122,8 +131,7 @@
                                         {% endfor %}
                                       
                                     </datalist>
-                            </div>-->
-                                                
+                            </div>-->                       
                         </div>  
                         <div class="form-group row">
                             <div class="col-lg-3 mb-3">
@@ -153,19 +161,13 @@
                             </div>
                                                 
                         </div>                                       
-                        <div class="form-group row">                                             
-                            <div class="col-lg-12 mb-3">
-                                <label for="txtObservaciones" class="fw-bold">Observaciones:</label>
-                                <textarea name="txtObservaciones" id="txtObservaciones" cols="30" rows="5" class="form-control" ></textarea>
-                            </div>
-                        </div>
                     </form>
                 </div>
         
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button class="btn btn-secondary" id="btnAgregarMaterialDetalle" data-bs-dismiss="modal">Add Detalle</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                 </div>
         
             </div>

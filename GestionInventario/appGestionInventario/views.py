@@ -457,16 +457,21 @@ def getElemento(request, codigo):
         }
     elif elemento.__class__.__name__ == "Material":
         detalleMateriales = DetalleEntradaMaterial.objects.all().filter(detMaterial=elemento)
-        print(detalleMateriales)
         cantidades = []
         for dtMaterial in detalleMateriales:
             cantidad = {
                 "unidad": dtMaterial.detUnidadMedida.uniNombre,
-                "cantidad": dtMaterial.detCantidad
+                "valor": dtMaterial.detCantidad
             }
-            
-            
             cantidades.append(cantidad)
+        
+        for i in range(len(cantidades)):
+            for j in range(i, len(cantidades)):
+                if i != j:
+                    if cantidades[i]["unidad"] == cantidades[j]["unidad"]:
+                        cantidades[i]["valor"] += cantidades[j]["valor"]
+                        cantidades.pop(j)
+        
         retorno = {
             "codigo": elemento.matElemento.eleCodigo,
             "nombre": elemento.matElemento.eleNombre,
