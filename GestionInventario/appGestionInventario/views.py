@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import render, redirect
 from appGestionInventario.models import *
 from django.contrib.auth.models import Group
@@ -181,12 +182,10 @@ def salir(request):
 
 
 def SolicitarElementos(request):
-    devolutivos = Devolutivo.objects.all()
-    materiales = Material.objects.all()
 
+    hoy = date.today()
     json = {
-        "devolutivos": devolutivos,
-        "materiales": materiales,
+        "hoy": hoy.strftime("%Y-%m-%d"),
         "rol": request.user.groups.get().name,
     }
     return render(request, "instructor/solicitarElementos.html", json)
@@ -454,6 +453,7 @@ def getElemento(request, codigo):
             "codigo": elemento.devElemento.eleCodigo,
             "nombre": elemento.devElemento.eleNombre,
             "tipo": elemento.devElemento.eleTipo,
+            "descripcion": elemento.devDescripcion
         }
     elif elemento.__class__.__name__ == "Material":
         detalleMateriales = DetalleEntradaMaterial.objects.all().filter(detMaterial=elemento)
@@ -464,14 +464,17 @@ def getElemento(request, codigo):
                 "valor": dtMaterial.detCantidad
             }
             cantidades.append(cantidad)
-        
+
         for i in range(len(cantidades)):
             for j in range(i, len(cantidades)):
                 if i != j:
-                    if cantidades[i]["unidad"] == cantidades[j]["unidad"]:
-                        cantidades[i]["valor"] += cantidades[j]["valor"]
-                        cantidades.pop(j)
-        
+                    try:
+                        if cantidades[i]["unidad"] == cantidades[j]["unidad"]:
+                            cantidades[i]["valor"] += cantidades[j]["valor"]
+                            cantidades.pop(j)
+                    except:
+                        ""
+
         retorno = {
             "codigo": elemento.matElemento.eleCodigo,
             "nombre": elemento.matElemento.eleNombre,
@@ -498,3 +501,35 @@ def devolutivoOrMaterial(codigo):
     else:
         mensaje = "No existe ese material"
         return mensaje
+
+def getElementos(request):
+    devolutivos = Devolutivo.objects.all()
+    materiales = Material.objects.all()
+    
+    elementos = []
+    for devolutivo in devolutivos:
+        elemento = {
+            "codigo": devolutivo.devElemento.eleCodigo,
+            "nombre": devolutivo.devElemento.eleNombre,
+            "tipo": devolutivo.devElemento.eleTipo,
+            "estado": devolutivo.devElemento.eleEstado,
+            "descripcion": devolutivo.devDescripcion
+        }
+        
+        elementos.append(elemento)
+        
+    for material in materiales:
+        material = {
+            "codigo": material.matElemento.eleCodigo,
+            "nombre": material.matElemento.eleNombre,
+            "tipo": material.matElemento.eleTipo,
+            "estado": material.matElemento.eleEstado
+        }
+        
+        elementos.append(material)
+    
+    retorno = {
+        "elementos": elementos
+    }
+    
+    return JsonResponse(retorno)
