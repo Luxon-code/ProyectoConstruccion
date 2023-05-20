@@ -120,7 +120,15 @@ def vistaGestionarUsuarios(request):
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
 def vistaLogin(request):
-    return render(request, "frmIniciarSesion.html")
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='Administrador').exists():
+            return redirect('/inicioAdministrador')
+        elif request.user.groups.filter(name='Asistente').exists():
+            return redirect('/inicioAsistente')
+        else:
+            return redirect('/inicioInstructor')
+    else:
+        return render(request, "frmIniciarSesion.html")
 
 def login(request):
     # validar el recapthcha
