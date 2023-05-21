@@ -18,7 +18,7 @@ function getElements() {
                         <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                         <p class="card-text">${elemento.nombre}</p>
-                        <p class="card-text">${elemento.descripcion != undefined ? elemento.descripcion : ""}</p>
+                        <p class="card-text">${elemento.descripcion ??= ""}</p>
                         </div>
                         <button class="btn btn-primary" onclick="addElement('${elemento.codigo}')" data-bs-dismiss="offcanvas">Add</button>
                         </div>
@@ -35,7 +35,7 @@ function addElement(codigo) {
     if (codigo == undefined) {
         search = document.getElementsByName("search")
         search.forEach(s => {
-            s.value != "" ? codigo = s.value : ""
+            codigo ??= s.value
             s.value = ""
         });
     }
@@ -58,7 +58,7 @@ function addElement(codigo) {
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <h4 class="card-title">${data.nombre}</h4>
-                <button type="button" class="btn-close"></button>
+                <button type="button" class="btn-close" onclick="deleteCard('card${data.codigo}')"></button>
             </div>
             <div class="card-body">
             <p class="card-text">${tiposElementos[data.tipo]}</p>
@@ -86,21 +86,26 @@ function addElement(codigo) {
 }
 
 function addCantidad(codigo) {
-    document.getElementById(codigo).value >= 1 ? document.getElementById(codigo).value++ : document.getElementById(codigo).value = 1
+    let cantidad = document.getElementById(codigo)
+    cantidad.value >= 1 ? cantidad.value++ : cantidad.value = 1
 }
 
 function loseCantidad(codigo) {
-    document.getElementById(codigo).value > 1 ? document.getElementById(codigo).value-- : document.getElementById(codigo).value = 1
+    let cantidad = document.getElementById(codigo)
+    cantidad.value > 1 ? cantidad.value-- : cantidad.value = 1
 }
 
 function cantidades(cantidades) {
-    console.log(cantidades)
     let html = `<select class="form-select w-50 mb-3" name="unidad">`
     cantidades.forEach(c => {
         html += `<option value="${c.unidad}">${c.unidad}</option>`
     });
     html += `</select>`
     return html
+}
+
+function deleteCard(codigo) {
+    document.getElementById(codigo).remove()
 }
 
 getElements()
