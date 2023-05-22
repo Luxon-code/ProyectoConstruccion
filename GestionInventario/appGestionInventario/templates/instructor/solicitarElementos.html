@@ -24,16 +24,14 @@
             data-bs-target="#demo">
             Elementos
         </button>
-        <button class="btn btn-primary me-2 col-2 col-sm" type="button" data-bs-toggle="modal"
-            data-bs-target="#exampleModal">
+        <button class="btn btn-primary me-2 col-2 col-sm" type="button" onclick="prepararSolicitud()">
             Hacer Solicitud
         </button>
-        <button class="btn btn-primary me-2 col-2 col-sm" type="button">
+        <button class="btn btn-primary me-2 col-2 col-sm" type="button" onclick="deleteAllElements()">
             Eliminar Elementos
         </button>
     </div>
-    <div class="row justify-content-center align-items-center g-2 my-1 detalleElementos" id="detalleElementos">
-    </div>
+    <div class="row justify-content-center align-items-center g-2 my-1 detalleElementos" id="detalleElementos"></div>
 </div>
 
 <!-- Offcanvas Sidebar -->
@@ -54,11 +52,11 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Datos De La Solicitud</h5>
+                <h5 class="modal-title" id="solicitudModalLabel">Datos De La Solicitud</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -70,15 +68,23 @@
                       <label for="nameProyect">Nombre Del Proyecto</label>
                     </div>
                     <div class="mb-3">
+                        <label for="ficha" class="form-label">Ficha:</label>
+                        <select class="form-select form-select-sm" name="ficha" id="ficha">
+                            {% for f in fichas %}
+                            <option value="{{f.ficCodigo}}">{{f.ficNombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
                       <label for="dateProyect" class="form-label">Para:</label>
                       <input type="date"
-                        class="form-control" name="dateProyect" id="dateProyect" min="{{hoy}}">
+                        class="form-control" name="dateProyect" id="dateProyect" min="{{hoy}}" value="{{hoy}}">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="enviarSolicitud()">Enviar Solicitud</button>
             </div>
         </div>
     </div>

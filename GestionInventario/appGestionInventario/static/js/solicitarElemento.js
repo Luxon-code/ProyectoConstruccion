@@ -6,7 +6,7 @@ const tiposElementos = {
 }
 
 function getElements() {
-    url = `/elementos/`
+    let url = `/elementos/`
 
     fetch(url)
         .then(res => res.json())
@@ -49,32 +49,42 @@ function addElement(codigo) {
         return true
     }
 
-    url = `/elemento/${codigo}`
+    let url = `/elemento/${codigo}`
 
     fetch(url)
         .then(res => res.json())
         .then(data => {
+            if (data.estado == false) {
+                Swal.fire(
+                    'Material No Disponible',
+                    'No hay nada de este material, sorry :c',
+                    'error'
+                )
+                return ""
+            }
+
             let html = `<div class="col-sm" id="card${data.codigo}">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <h4 class="card-title">${data.nombre}</h4>
-                <button type="button" class="btn-close" onclick="deleteCard('card${data.codigo}')"></button>
-            </div>
-            <div class="card-body">
-            <p class="card-text">${tiposElementos[data.tipo]}</p>
-            <div class="d-flex justify-content-center">
-              <div class="input-group mb-3 ${data.cantidades != undefined ? "w-50" : "w-75"} me-1">
-                <button class="btn btn-success" type="button" id="button-add" onclick="addCantidad('c${data.codigo}')">+</button>
-                <input type="number" class="form-control" id="c${data.codigo}" value="1" min="1">
-                <button class="btn btn-danger" type="button" onclick="loseCantidad('c${data.codigo}')">-</button>
-              </div>
-              ${data.cantidades != undefined ? cantidades(data.cantidades) : ""}
-            </div>
-          </div>
-        </div>
-      </div>`
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <h4 class="card-title">${data.nombre}</h4>
+                                <button type="button" class="btn-close" onclick="deleteCard('card${data.codigo}')"></button>
+                            </div>
+                            <div class="card-body">
+                            <p class="card-text">${tiposElementos[data.tipo]}</p>
+                            <div class="d-flex justify-content-center">
+                            <div class="input-group mb-3 ${data.cantidades != undefined ? "w-50" : "w-75"} me-1">
+                                <button class="btn btn-success" type="button" id="button-add" onclick="addCantidad('c${data.codigo}')">+</button>
+                                <input type="number" class="form-control" id="c${data.codigo}" value="1" min="1" name="cantidad">
+                                <button class="btn btn-danger" type="button" onclick="loseCantidad('c${data.codigo}')">-</button>
+                            </div>
+                            ${data.cantidades != undefined ? cantidades(data.cantidades) : ""}
+                            </div>
+                        </div>
+                        </div>
+                    </div>`
             let card = document.getElementById(`card${data.codigo}`)
             card == undefined ? document.getElementById("detalleElementos").innerHTML += html : addCantidad(`c${data.codigo}`)
+            checkCantidades(`c${data.codigo}`)
         })
         .catch(err => {
             Swal.fire(
@@ -108,4 +118,82 @@ function deleteCard(codigo) {
     document.getElementById(codigo).remove()
 }
 
+function deleteAllElements() {
+    document.getElementById("detalleElementos").innerHTML = ""
+}
+
+function prepararSolicitud() {
+    let detalle = document.getElementById("detalleElementos")
+    myModal = new bootstrap.Modal(document.getElementById('solicitudModal'))
+    if (detalle.innerHTML == "") {
+        Swal.fire(
+            'Solicitud Vacia',
+            'Debe haber un elemento minimo',
+            'warning'
+        )
+        return
+    }
+    myModal.toggle()
+}
+
+function enviarSolicitud() {
+    let nameProyect = document.getElementById("nameProyect").value
+    if (nameProyect == "") {
+        Swal.fire(
+            'Nombre Del Proyecto',
+            'El campo esta vacio',
+            'warning'
+        )
+        return
+    }
+
+    let data = {
+        "nameProyect": nameProyect,
+        "mensaje": "hello"
+    }
+
+    let url = "/newSolicitud/"
+    let options = {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            "Content-Type": "application/json"
+        }
+    }
+
+    fetch(url, options)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+        })
+    myModal.toggle()
+}
+
+function checkCantidades(codigo) {
+    let cantidad = document.getElementById(codigo)
+    cantidad.addEventListener("blur", () => {
+        cantidad.value <= 0 ? cantidad.value = 1 : ""
+    })
+}
+
+function getCookie(name) {
+    let cookieValue = null
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';')
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim()
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+                return cookieValue;
+            }
+        }
+    }
+}
+
 getElements()
+fechaProyect = document.getElementById("dateProyect")
+fechaProyect.addEventListener("blur", () => {
+    let hoy = new Date
+    hoy.getTime() > fechaProyect.valueAsNumber ? fechaProyect.valueAsNumber = hoy.getTime() : ""
+})

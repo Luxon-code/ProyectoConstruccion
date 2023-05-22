@@ -18,8 +18,10 @@ from django.http import JsonResponse
 # Create your views here.
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
+
 def inicio(request):
     return render(request, "inicio.html")
+
 
 def inicioAdministrador(request):
     if request.user.is_authenticated:
@@ -30,6 +32,7 @@ def inicioAdministrador(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
+
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
         roles = Group.objects.all()
@@ -39,6 +42,7 @@ def vistaRegistrarUsuario(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
 
 def registrarUsuario(request):
     try:
@@ -92,6 +96,7 @@ def registrarUsuario(request):
     retorno = {"mensaje": mensaje}
     return render(request, "administrador/frmRegistrarUsuario.html", retorno)
 
+
 def generarPassword():
     """
     Genera un password de longitud de 10 que incluye letras mayusculas
@@ -109,6 +114,7 @@ def generarPassword():
         password += ''.join(random.choice(caracteres))
     return password
 
+
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
         usuarios = User.objects.all()
@@ -118,6 +124,7 @@ def vistaGestionarUsuarios(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
 
 def vistaLogin(request):
     if request.user.is_authenticated:
@@ -129,6 +136,7 @@ def vistaLogin(request):
             return redirect('/inicioInstructor')
     else:
         return render(request, "frmIniciarSesion.html")
+
 
 def login(request):
     # validar el recapthcha
@@ -166,18 +174,22 @@ def login(request):
         mensaje = "Debe validar primero el recaptcha"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
+
 def salir(request):
     auth.logout(request)
     return render(request, "frmIniciarSesion.html",
                   {"mensaje": "Ha cerrado la sesión"})
 
+
 def SolicitarElementos(request):
     hoy = date.today()
     json = {
         "hoy": hoy.strftime("%Y-%m-%d"),
+        "fichas": Ficha.objects.all(),
         "rol": request.user.groups.get().name,
     }
     return render(request, "instructor/solicitarElementos.html", json)
+
 
 def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
     remitente = settings.EMAIL_HOST_USER
@@ -196,6 +208,7 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
     except SMTPException as error:
         print(error)
 
+
 def vistaGestionarElementos(request):
     if request.user.is_authenticated:
         retorno = {"devolutivos": Devolutivo.objects.all(
@@ -205,6 +218,7 @@ def vistaGestionarElementos(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
+
 def vistaRegistrarElementos(request):
     if request.user.is_authenticated:
         retorno = {"tipoElemento": tipoElemento, "estadoElemento": estadosElementos, "user": request.user,
@@ -213,6 +227,7 @@ def vistaRegistrarElementos(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
 
 def registrarElementos(request):
     estado = False
@@ -270,6 +285,7 @@ def registrarElementos(request):
                "estadoElemento": estadosElementos, "ubicacionFisica": ubicacion}
     return render(request, "asistente/frmRegistrarElementos.html", retorno)
 
+
 def asistenteInicio(request):
     if request.user.is_authenticated:
         datosSesion = {"user": request.user,
@@ -278,6 +294,7 @@ def asistenteInicio(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
 
 def asistenteSolicitudes(request):
     if request.user.is_authenticated:
@@ -288,6 +305,7 @@ def asistenteSolicitudes(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
+
 def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
         retorno = {"materiales": DetalleEntradaMaterial.objects.all(), "user": request.user,
@@ -297,6 +315,7 @@ def vistaGestionarMateriales(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
+
 def vistaRegistrarMateriales(request):
     if request.user.is_authenticated:
         retorno = {"estadoElemento": estadosElementos, "user": request.user,
@@ -305,6 +324,7 @@ def vistaRegistrarMateriales(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
 
 def registrarMaterial(request):
     estado = False
@@ -355,6 +375,7 @@ def registrarMaterial(request):
                "material": material, "ubicacionFisica": ubicacion}
     return render(request, "asistente/frmRegistrarMateriales.html", retorno)
 
+
 def inicioInstructor(request):
     if request.user.is_authenticated:
         datosSesion = {"user": request.user,
@@ -363,6 +384,7 @@ def inicioInstructor(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
 
 def vistaRegistrarEntradaMaterial(request):
     if request.user.is_authenticated:
@@ -378,6 +400,7 @@ def vistaRegistrarEntradaMaterial(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
 
 def registrarEntradaMaterial(request):
     if request.method == "POST":
@@ -418,6 +441,7 @@ def registrarEntradaMaterial(request):
         retorno = {"estado": estado, "mensaje": mensaje}
         return JsonResponse(retorno)
 
+
 def getElemento(request, codigo):
     elemento = devolutivoOrMaterial(codigo)
 
@@ -430,36 +454,43 @@ def getElemento(request, codigo):
         }
     elif elemento.__class__.__name__ == "Material":
         detalleMateriales = DetalleEntradaMaterial.objects.all().filter(detMaterial=elemento)
-        cantidades = []
-        for dtMaterial in detalleMateriales:
-            cantidad = {
-                "unidad": dtMaterial.detUnidadMedida.uniNombre,
-                "valor": dtMaterial.detCantidad
+        if len(detalleMateriales) > 0:
+            cantidades = []
+            for dtMaterial in detalleMateriales:
+                cantidad = {
+                    "unidad": dtMaterial.detUnidadMedida.uniNombre,
+                    "valor": dtMaterial.detCantidad
+                }
+                cantidades.append(cantidad)
+
+            for i in range(len(cantidades)):
+                for j in range(i, len(cantidades)):
+                    if i != j:
+                        try:
+                            if cantidades[i]["unidad"] == cantidades[j]["unidad"]:
+                                cantidades[i]["valor"] += cantidades[j]["valor"]
+                                cantidades.pop(j)
+                        except:
+                            ""
+
+            retorno = {
+                "codigo": elemento.matElemento.eleCodigo,
+                "nombre": elemento.matElemento.eleNombre,
+                "tipo": elemento.matElemento.eleTipo,
+                "cantidades": cantidades
             }
-            cantidades.append(cantidad)
-
-        for i in range(len(cantidades)):
-            for j in range(i, len(cantidades)):
-                if i != j:
-                    try:
-                        if cantidades[i]["unidad"] == cantidades[j]["unidad"]:
-                            cantidades[i]["valor"] += cantidades[j]["valor"]
-                            cantidades.pop(j)
-                    except:
-                        ""
-
-        retorno = {
-            "codigo": elemento.matElemento.eleCodigo,
-            "nombre": elemento.matElemento.eleNombre,
-            "tipo": elemento.matElemento.eleTipo,
-            "cantidades": cantidades
-        }
+        else:
+            retorno = {
+                "estado": False,
+                "mensaje": "Material no disponible"
+            }
     else:
         retorno = {
             "Error": elemento
         }
 
     return JsonResponse(retorno)
+
 
 def devolutivoOrMaterial(codigo):
     elemento = Elemento.objects.get(eleCodigo=codigo)
@@ -473,6 +504,7 @@ def devolutivoOrMaterial(codigo):
     else:
         mensaje = "No existe ese material"
         return mensaje
+
 
 def getElementos(request):
     devolutivos = Devolutivo.objects.all()
@@ -506,6 +538,14 @@ def getElementos(request):
 
     return JsonResponse(retorno)
 
-# def getFichas(request):
-#     fichas = Ficha.objects.all()
+def newSolicitud(request):
     
+    data = json.loads(request.body)
+    
+    print(data["mensaje"])
+    
+    retorno = {
+        "mensaje": "llego :D"
+    }
+    
+    return JsonResponse(retorno)

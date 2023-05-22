@@ -43,6 +43,7 @@ urlpatterns = [
     path('registrarEntradaMaterial/',views.registrarEntradaMaterial),
     path('elemento/<str:codigo>', views.getElemento),
     path('elementos/', views.getElementos),
+    path('newSolicitud/', views.newSolicitud),
 ]
 
 if settings.DEBUG:
