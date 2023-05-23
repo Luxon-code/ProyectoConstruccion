@@ -63,7 +63,7 @@ function addElement(codigo) {
                 return ""
             }
 
-            let html = `<div class="col-sm" id="card${data.codigo}">
+            let html = `<div class="col-sm" id="card${data.codigo}" name="elemento">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
                                 <h4 class="card-title">${data.nombre}</h4>
@@ -77,7 +77,7 @@ function addElement(codigo) {
                                 <input type="number" class="form-control" id="c${data.codigo}" value="1" min="1" name="cantidad">
                                 <button class="btn btn-danger" type="button" onclick="loseCantidad('c${data.codigo}')">-</button>
                             </div>
-                            ${data.cantidades != undefined ? cantidades(data.cantidades) : ""}
+                            ${data.cantidades != undefined ? cantidades(data.cantidades, data.codigo) : ""}
                             </div>
                         </div>
                         </div>
@@ -105,8 +105,8 @@ function loseCantidad(codigo) {
     cantidad.value > 1 ? cantidad.value-- : cantidad.value = 1
 }
 
-function cantidades(cantidades) {
-    let html = `<select class="form-select w-50 mb-3" name="unidad">`
+function cantidades(cantidades, codigo) {
+    let html = `<select class="form-select w-50 mb-3" name="unidad" id="u${codigo}">`
     cantidades.forEach(c => {
         html += `<option value="${c.unidad}">${c.unidad}</option>`
     });
@@ -138,6 +138,24 @@ function prepararSolicitud() {
 
 function enviarSolicitud() {
     let nameProyect = document.getElementById("nameProyect").value
+    let ficha = document.getElementById("ficha").value
+    let fechaStr = fechaProyect.value.split('-')
+    let cardElementos = document.getElementsByName("elemento")
+
+    let elementos = []
+
+    cardElementos.forEach(cardElement => {
+        let codigo = cardElement.id.slice(4)
+        let cantidad = document.getElementById(`c${codigo}`).value
+        let unidad = document.getElementById(`u${codigo}`)
+        let elemento = {
+            "codigo": codigo,
+            "cantidad": parseInt(cantidad),
+            "unidad": unidad == null ? "" : unidad.value
+        }
+        elementos.push(elemento)
+    })
+
     if (nameProyect == "") {
         Swal.fire(
             'Nombre Del Proyecto',
@@ -149,6 +167,13 @@ function enviarSolicitud() {
 
     let data = {
         "nameProyect": nameProyect,
+        "ficha": parseInt(ficha),
+        "fecha": {
+            "yy": parseInt(fechaStr[0]),
+            "mm": parseInt(fechaStr[1]),
+            "dd": parseInt(fechaStr[2])
+        },
+        "elementos": elementos,
         "mensaje": "hello"
     }
 
@@ -165,9 +190,22 @@ function enviarSolicitud() {
     fetch(url, options)
         .then(res => res.json())
         .then(data => {
-            console.log(data)
+            if (data.estado) {
+                document.getElementById("detalleElementos").innerHTML = ""
+                myModal.toggle()
+                Swal.fire(
+                    'Solicitud Enviada',
+                    data.mensaje,
+                    'success'
+                )
+            }else{
+                Swal.fire(
+                    'Error',
+                    data.mensaje,
+                    'error'
+                )
+            }
         })
-    myModal.toggle()
 }
 
 function checkCantidades(codigo) {

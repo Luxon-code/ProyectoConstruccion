@@ -160,7 +160,7 @@ class DetalleSolicitud(models.Model):
     detSolicitud = models.ForeignKey(SolicitudElemento,on_delete=models.PROTECT,
                                     db_comment="Hace referencia a la solicitud del detalle que se va a registrar")
     detElemento = models.ForeignKey(Elemento,on_delete=models.PROTECT,db_comment="Elemento que se está solicitando")    
-    detUnidadMedida = models.ForeignKey(UnidadMedida,on_delete=models.PROTECT,
+    detUnidadMedida = models.ForeignKey(UnidadMedida,on_delete=models.PROTECT, null=True,
                                         db_comment="Unidad de médida del elemento que se requeire")
     detCantidadRequerida = models.IntegerField(db_comment="Cantidad requerida del elemento")
     fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")

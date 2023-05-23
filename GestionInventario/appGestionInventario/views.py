@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from django.shortcuts import render, redirect
 from appGestionInventario.models import *
 from django.contrib.auth.models import Group
@@ -540,12 +540,42 @@ def getElementos(request):
 
 def newSolicitud(request):
     
+    estado = False
+    mensaje = ""
     data = json.loads(request.body)
+    nombre = data['nameProyect']
+    fecha = datetime(data['fecha']['yy'],data['fecha']['mm'],data['fecha']['dd'])
+    estado = "Solicitada"
+    ficha = Ficha.objects.get(ficCodigo = data['ficha']) 
+    elementos = data['elementos']
     
-    print(data["mensaje"])
+    try:
+        with transaction.atomic():
+            solicitud = SolicitudElemento(solProyecto = nombre, solFechaHoraRequerida = fecha, solEstado = estado, solFicha = ficha, solUsuario = request.user)
+            solicitud.save()
+            
+            for e in elementos:
+                elemento = Elemento.objects.get(eleCodigo = e['codigo'])
+                cantidad = e['cantidad']
+                
+                if e['unidad'] != "":
+                    unidad = UnidadMedida.objects.get(uniNombre = e['unidad'])
+                    detalle = DetalleSolicitud(detCantidadRequerida = cantidad, detElemento = elemento, detSolicitud = solicitud, detUnidadMedida = unidad)
+                else:
+                    detalle = DetalleSolicitud(detCantidadRequerida = cantidad, detElemento = elemento, detSolicitud = solicitud)
+                
+                detalle.save()
+            
+            estado = True
+            mensaje = "Solicitud Enviada"
+    
+    except Error as error:
+            transaction.rollback()
+            mensaje = f"{error}"
     
     retorno = {
-        "mensaje": "llego :D"
+        "estado": estado,
+        "mensaje": mensaje
     }
     
     return JsonResponse(retorno)
