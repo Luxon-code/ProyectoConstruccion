@@ -21,20 +21,22 @@
                 <th>Marca</th>
                 <th>Estado</th>
                 <th>Cantidad</th>
-                <th>Precio</th>
                 <th>Accion</th>
             </tr>
         </thead>
         <tbody>
             {% for material in materiales %}
                 <tr>
-                    <td>{{material.detMaterial.matElemento.eleCodigo}}</td>
-                    <td>{{material.detMaterial.matElemento.eleNombre}}</td>
-                    <td>{{material.detMaterial.matReferencia}}</td>
-                    <td>{{material.detMaterial.matMarca}}</td>
-                    <td>{{material.detEstado}}</td>
-                    <td>{{material.detCantidad}}</td>
-                    <td>{{material.detPrecioUnitario}}</td>
+                    <td>{{material.matElemento.eleCodigo}}</td>
+                    <td>{{material.matElemento.eleNombre}}</td>
+                    <td>{{material.matReferencia}}</td>
+                    <td>{{material.matMarca}}</td>
+                    <td>{{material.matElemento.eleEstado}}</td>
+                    {%for cantidad in cantidades%}
+                        {%if cantidad.detMaterial == material.id%}
+                            <td>{{cantidad.cantidad}}</td>
+                        {%endif%}
+                    {%endfor%}
                     <td class="text-center">
                         <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
                     </td>

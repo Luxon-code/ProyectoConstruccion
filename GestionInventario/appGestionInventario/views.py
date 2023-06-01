@@ -15,12 +15,11 @@ from django.template.loader import get_template
 import threading
 from smtplib import SMTPException
 from django.http import JsonResponse
+from django.db.models import Sum,Avg,Count
 # Create your views here.
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
 
-def inicio(request):
-    return render(request, "inicio.html")
 
 
 def inicioAdministrador(request):
@@ -308,7 +307,11 @@ def asistenteSolicitudes(request):
 
 def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"materiales": DetalleEntradaMaterial.objects.all(), "user": request.user,
+        cantidadMaterial = DetalleEntradaMaterial.objects.values('detMaterial').annotate(cantidad=Sum('detCantidad'))
+        print(cantidadMaterial)
+        retorno = {"materiales": Material.objects.all(), 
+                   'cantidades':cantidadMaterial,
+                   "user": request.user,
                    "rol": request.user.groups.get().name}
         return render(request, "asistente/vistaGestionarMateriales.html", retorno)
     else:

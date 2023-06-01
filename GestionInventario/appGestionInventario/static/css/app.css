@@ -16,6 +16,11 @@ a{
     }
 }
 
+#cbRolMenu:focus{
+    background-color:rgb(57, 169, 0);
+    box-shadow: none;
+}
+
 @media only screen and (min-width: 800px) {
     .detalleElementos {
         display: grid;

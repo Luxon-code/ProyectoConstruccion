@@ -21,14 +21,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.inicio),
     path('inicioAdministrador/',views.inicioAdministrador),
     path('inicioAsistente/',views.asistenteInicio),
     path('inicioInstructor/',views.inicioInstructor),
     path('vistaRegistrarUsuario/',views.vistaRegistrarUsuario),
     path('registrarUsuario/',views.registrarUsuario),
     path('vistaGestionarUsuarios/',views.vistaGestionarUsuarios),
-    path('vistaLogin/',views.vistaLogin),
+    path('',views.vistaLogin),
     path('login/',views.login),
     path('salir/',views.salir),
     path('solicitarElementos/',views.SolicitarElementos),
