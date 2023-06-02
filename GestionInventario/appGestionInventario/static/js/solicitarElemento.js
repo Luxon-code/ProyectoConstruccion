@@ -35,7 +35,7 @@ function addElement(codigo) {
     if (codigo == undefined) {
         search = document.getElementsByName("search")
         search.forEach(s => {
-            codigo ??= s.value
+            codigo ||= s.value //! operador assignment
             s.value = ""
         });
     }

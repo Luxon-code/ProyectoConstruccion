@@ -76,8 +76,13 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                      <label for="dateProyect" class="form-label">Para:</label>
-                      <input type="date"
+                      <label for="dateProyect" class="form-label">Para cuando lo necesita:</label>
+                      <input type="datetime-local"
+                        class="form-control" name="dateProyect" id="dateProyect" min="{{hoy}}" value="{{hoy}}">
+                    </div>
+                    <div class="mb-3">
+                      <label for="dateProyect" class="form-label">Cuando puede devolverlo:</label>
+                      <input type="datetime-local"
                         class="form-control" name="dateProyect" id="dateProyect" min="{{hoy}}" value="{{hoy}}">
                     </div>
                 </form>

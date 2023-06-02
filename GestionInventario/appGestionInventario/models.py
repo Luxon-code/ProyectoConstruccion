@@ -147,6 +147,7 @@ class SolicitudElemento(models.Model):
                                  db_comment="Ficha en la que el instructor utilizará los elementos")
     solProyecto = models.TextField(db_comment="Nombre proyecto que el instructor está desarrollando con la ficha")
     solFechaHoraRequerida = models.DateTimeField(null=True,db_comment="Fecha y hora que requiere los elementos")
+    solFechaHoraDevolver = models.DateTimeField(null=True,db_comment="Fecha y hora que requiere los elementos")
     solEstado = models.CharField(max_length=10,choices=estadoSolicitudes,db_comment="Estado de la solicitud")
     solObservaciones = models.TextField(null=True,
                          db_comment="Alguna observación que el instructor quiera agregar en la solicitud")

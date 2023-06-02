@@ -15,11 +15,9 @@ from django.template.loader import get_template
 import threading
 from smtplib import SMTPException
 from django.http import JsonResponse
-from django.db.models import Sum,Avg,Count
+from django.db.models import Sum, Avg, Count
 # Create your views here.
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
-
-
 
 
 def inicioAdministrador(request):
@@ -183,7 +181,7 @@ def salir(request):
 def SolicitarElementos(request):
     hoy = date.today()
     json = {
-        "hoy": hoy.strftime("%Y-%m-%d"),
+        "hoy": hoy.strftime("%Y-%m-%dT%H:%M"),
         "fichas": Ficha.objects.all(),
         "rol": request.user.groups.get().name,
     }
@@ -307,10 +305,11 @@ def asistenteSolicitudes(request):
 
 def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
-        cantidadMaterial = DetalleEntradaMaterial.objects.values('detMaterial').annotate(cantidad=Sum('detCantidad'))
+        cantidadMaterial = DetalleEntradaMaterial.objects.values(
+            'detMaterial').annotate(cantidad=Sum('detCantidad'))
         print(cantidadMaterial)
-        retorno = {"materiales": Material.objects.all(), 
-                   'cantidades':cantidadMaterial,
+        retorno = {"materiales": Material.objects.all(),
+                   'cantidades': cantidadMaterial,
                    "user": request.user,
                    "rol": request.user.groups.get().name}
         return render(request, "asistente/vistaGestionarMateriales.html", retorno)
@@ -541,44 +540,48 @@ def getElementos(request):
 
     return JsonResponse(retorno)
 
+
 def newSolicitud(request):
-    
+
     estado = False
     mensaje = ""
     data = json.loads(request.body)
     nombre = data['nameProyect']
-    fecha = datetime(data['fecha']['yy'],data['fecha']['mm'],data['fecha']['dd'])
+    fecha = datetime(data['fecha']['yy'], data['fecha']['mm'], data['fecha']['dd'])
     estado = "Solicitada"
-    ficha = Ficha.objects.get(ficCodigo = data['ficha']) 
+    ficha = Ficha.objects.get(ficCodigo=data['ficha'])
     elementos = data['elementos']
-    
+
     try:
         with transaction.atomic():
-            solicitud = SolicitudElemento(solProyecto = nombre, solFechaHoraRequerida = fecha, solEstado = estado, solFicha = ficha, solUsuario = request.user)
+            solicitud = SolicitudElemento(
+                solProyecto=nombre, solFechaHoraRequerida=fecha, solEstado=estado, solFicha=ficha, solUsuario=request.user)
             solicitud.save()
-            
+
             for e in elementos:
-                elemento = Elemento.objects.get(eleCodigo = e['codigo'])
+                elemento = Elemento.objects.get(eleCodigo=e['codigo'])
                 cantidad = e['cantidad']
-                
+
                 if e['unidad'] != "":
-                    unidad = UnidadMedida.objects.get(uniNombre = e['unidad'])
-                    detalle = DetalleSolicitud(detCantidadRequerida = cantidad, detElemento = elemento, detSolicitud = solicitud, detUnidadMedida = unidad)
+                    unidad = UnidadMedida.objects.get(uniNombre=e['unidad'])
+                    detalle = DetalleSolicitud(
+                        detCantidadRequerida=cantidad, detElemento=elemento, detSolicitud=solicitud, detUnidadMedida=unidad)
                 else:
-                    detalle = DetalleSolicitud(detCantidadRequerida = cantidad, detElemento = elemento, detSolicitud = solicitud)
-                
+                    detalle = DetalleSolicitud(
+                        detCantidadRequerida=cantidad, detElemento=elemento, detSolicitud=solicitud)
+
                 detalle.save()
-            
+
             estado = True
             mensaje = "Solicitud Enviada"
-    
+
     except Error as error:
-            transaction.rollback()
-            mensaje = f"{error}"
-    
+        transaction.rollback()
+        mensaje = f"{error}"
+
     retorno = {
         "estado": estado,
         "mensaje": mensaje
     }
-    
+
     return JsonResponse(retorno)
