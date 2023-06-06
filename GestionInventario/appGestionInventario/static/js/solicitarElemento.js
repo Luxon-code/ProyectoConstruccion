@@ -139,7 +139,8 @@ function prepararSolicitud() {
 function enviarSolicitud() {
     let nameProyect = document.getElementById("nameProyect").value
     let ficha = document.getElementById("ficha").value
-    let fechaStr = fechaProyect.value.split('-')
+    let fechaR = document.getElementById("dateProyectRequerida").value
+    let fechaD = document.getElementById("dateProyectDevolver").value
     let cardElementos = document.getElementsByName("elemento")
 
     let elementos = []
@@ -168,13 +169,9 @@ function enviarSolicitud() {
     let data = {
         "nameProyect": nameProyect,
         "ficha": parseInt(ficha),
-        "fecha": {
-            "yy": parseInt(fechaStr[0]),
-            "mm": parseInt(fechaStr[1]),
-            "dd": parseInt(fechaStr[2])
-        },
-        "elementos": elementos,
-        "mensaje": "hello"
+        "fechaRequerida": fechaR,
+        "fechaDevolver": fechaD,
+        "elementos": elementos
     }
 
     let url = "/newSolicitud/"
@@ -198,7 +195,7 @@ function enviarSolicitud() {
                     data.mensaje,
                     'success'
                 )
-            }else{
+            } else {
                 Swal.fire(
                     'Error',
                     data.mensaje,
@@ -230,8 +227,3 @@ function getCookie(name) {
 }
 
 getElements()
-fechaProyect = document.getElementById("dateProyect")
-fechaProyect.addEventListener("blur", () => {
-    let hoy = new Date
-    hoy.getTime() > fechaProyect.valueAsNumber ? fechaProyect.valueAsNumber = hoy.getTime() : ""
-})

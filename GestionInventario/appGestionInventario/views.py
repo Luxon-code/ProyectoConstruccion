@@ -547,7 +547,8 @@ def newSolicitud(request):
     mensaje = ""
     data = json.loads(request.body)
     nombre = data['nameProyect']
-    fecha = datetime(data['fecha']['yy'], data['fecha']['mm'], data['fecha']['dd'])
+    fechaRequerida = datetime.strptime(data['fechaRequerida'], "%Y-%m-%dT%H:%M")
+    fechaDevolver = datetime.strptime(data['fechaDevolver'], "%Y-%m-%dT%H:%M")
     estado = "Solicitada"
     ficha = Ficha.objects.get(ficCodigo=data['ficha'])
     elementos = data['elementos']
@@ -555,7 +556,7 @@ def newSolicitud(request):
     try:
         with transaction.atomic():
             solicitud = SolicitudElemento(
-                solProyecto=nombre, solFechaHoraRequerida=fecha, solEstado=estado, solFicha=ficha, solUsuario=request.user)
+                solProyecto=nombre, solFechaHoraRequerida=fechaRequerida, solFechaHoraDevolver=fechaDevolver, solEstado=estado, solFicha=ficha, solUsuario=request.user)
             solicitud.save()
 
             for e in elementos:
