@@ -31,13 +31,43 @@
                     <td>{{solicitud.solProyecto}}</td>
                     <td>{{solicitud.solFechaHoraRequerida}}</td>
                     <td>{{solicitud.solEstado}}</td>
-                    <td class="d-flex justify-content-center"><a onclick="verDetalleSolicitud({{solicitud.id}})" class="icon fs-4"><i class="bi bi-eye"></i></a></td>
+                    <td class="d-flex justify-content-center"><a onclick="verDetalleSolicitud({{solicitud.id}})" data-bs-toggle="modal" data-bs-target="#modalDetalle" class="icon fs-4"><i class="bi bi-eye"></i></a></td>
                 </tr>
             {% endfor %} 
         </tbody>
     </table>
 </div>
-
+  
+  <!-- Modal -->
+  <div class="modal fade" id="modalDetalle" tabindex="-1" aria-labelledby="modalDetalleLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header verdeSena">
+          <h5 class="modal-title text-white" id="modalDetalleLabel">Detalle de la solicitud</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table  table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Elemento</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Unidad</th>
+                  </tr>
+                </thead>
+                <tbody id="tblDetalle">
+                    
+                </tbody>
+              </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <script>
    cargarDataTable($("#tblSolicitudes"),"Elementos Devolutivos",5)
 </script>

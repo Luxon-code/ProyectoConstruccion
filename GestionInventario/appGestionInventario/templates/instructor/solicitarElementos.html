@@ -10,26 +10,31 @@
 {% load static %}
 <br>
 <h3 class="text-center fw-bold">Solicitar Elementos</h3>
-
-<div class="container">
-    <div class="d-flex my-1">
+<div class="container" style="min-height:100vh; margin-bottom:5rem;">
+    <div class="d-flex my-1 row">
         <input class="form-control me-2 col-11 col-sm" type="search" placeholder="Search" list="elementos" name="search">
-        <button class="btn btn-primary me-2" type="button" onclick="addElement()" style="width: 20%;">Agregar</button>
+        <button class="btn btn-primary my-1" type="button" onclick="addElement()" style="width: 20%;">Agregar</button>
         <datalist id="elementos">
         </datalist>
     </div>
-    <div class="d-flex">
+    <div class="d-flex row">
         <!-- Button to open the offcanvas sidebar -->
-        <button class="btn btn-primary me-2 col-2 col-sm" type="button" data-bs-toggle="offcanvas"
+        <div class="col-sm-4 my-2">
+            <button class="btn btn-primary w-100" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#demo">
             Elementos
-        </button>
-        <button class="btn btn-primary me-2 col-2 col-sm" type="button" onclick="prepararSolicitud()">
-            Hacer Solicitud
-        </button>
-        <button class="btn btn-primary me-2 col-2 col-sm" type="button" onclick="deleteAllElements()">
-            Eliminar Elementos
-        </button>
+            </button>
+        </div>
+        <div class="col-sm-4 my-2">
+            <button class="btn btn-primary w-100" type="button" onclick="prepararSolicitud()">
+                Hacer Solicitud
+            </button>
+        </div>
+        <div class="col-sm-4 my-2">
+            <button class="btn btn-primary w-100" type="button" onclick="deleteAllElements()">
+                Eliminar Elementos
+            </button>
+        </div>
     </div>
     <div class="row justify-content-center align-items-center g-2 my-1 detalleElementos" id="detalleElementos"></div>
 </div>

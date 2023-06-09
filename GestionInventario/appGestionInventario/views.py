@@ -593,7 +593,7 @@ def vistaVerSolicitudes(request):
     if request.user.is_authenticated:
         retorno = {"user": request.user,
                    "rol": request.user.groups.get().name,
-                   'solicitudes': SolicitudElemento.objects.all(),}
+                   'solicitudes': SolicitudElemento.objects.filter(solUsuario=request.user).all(),}
         return render(request, "instructor/verSolicitudes.html", retorno)
     else:
         mensaje = "Debe iniciar sesión"
