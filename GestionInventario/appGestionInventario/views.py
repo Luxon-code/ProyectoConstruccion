@@ -390,6 +390,7 @@ def inicioInstructor(request):
 
 def vistaRegistrarEntradaMaterial(request):
     if request.user.is_authenticated:
+        hoy = date.today()
         retorno = {
             "materiales": Material.objects.all(),
             "unidadesMedida": UnidadMedida.objects.all(),
@@ -397,6 +398,7 @@ def vistaRegistrarEntradaMaterial(request):
             "proveedores": Proveedor.objects.all(),
             "user": request.user,
             "rol": request.user.groups.get().name,
+            "hoy":  hoy.strftime("%Y-%m-%dT%H:%M"),
         }
         return render(request, 'asistente/frmRegistrarEntradaMaterial.html', retorno)
     else:
@@ -585,4 +587,36 @@ def newSolicitud(request):
         "mensaje": mensaje
     }
 
+    return JsonResponse(retorno)
+
+def vistaVerSolicitudes(request):
+    if request.user.is_authenticated:
+        retorno = {"user": request.user,
+                   "rol": request.user.groups.get().name,
+                   'solicitudes': SolicitudElemento.objects.all(),}
+        return render(request, "instructor/verSolicitudes.html", retorno)
+    else:
+        mensaje = "Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+
+def getDetalleSolicitud(request,id):
+    detalleDeLaSolicitud = DetalleSolicitud.objects.filter(detSolicitud=id)
+    detSolicitud = []
+    for detalle in detalleDeLaSolicitud:
+        if detalle.detUnidadMedida != None:
+            det = {
+                'codigoElemento': detalle.detElemento.eleCodigo,
+                'NombreElemento': detalle.detElemento.eleNombre,
+                'cantidad': detalle.detCantidadRequerida,
+                'unidadMedidad': detalle.detUnidadMedida.uniNombre
+            }
+        else:
+             det = {
+                'codigoElemento': detalle.detElemento.eleCodigo,
+                'NombreElemento': detalle.detElemento.eleNombre,
+                'cantidad': detalle.detCantidadRequerida,
+                'unidadMedidad': 'No tiene'
+            }
+        detSolicitud.append(det)
+    retorno = {"detalleSolicitud":detSolicitud}
     return JsonResponse(retorno)

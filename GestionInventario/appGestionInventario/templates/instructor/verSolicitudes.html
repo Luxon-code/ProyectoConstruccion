@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "instructor/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<h3 class="text-center fw-bold">MIS SOLICITUDES</h3>
+
+<div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+    <br>
+    <br>
+    <table id="tblSolicitudes" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center verdeSena text-white">
+                <th>Ficha</th>
+                <th>Programa</th>
+                <th>Proyecto</th>
+                <th>Fecha Requerida</th>
+                <th>Estado</th>
+                <th>Ver detalle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud  in solicitudes %}
+                <tr>
+                    <td>{{solicitud.solFicha.ficCodigo}}</td>
+                    <td>{{solicitud.solFicha.ficNombre}}</td>
+                    <td>{{solicitud.solProyecto}}</td>
+                    <td>{{solicitud.solFechaHoraRequerida}}</td>
+                    <td>{{solicitud.solEstado}}</td>
+                    <td class="d-flex justify-content-center"><a onclick="verDetalleSolicitud({{solicitud.id}})" class="icon fs-4"><i class="bi bi-eye"></i></a></td>
+                </tr>
+            {% endfor %} 
+        </tbody>
+    </table>
+</div>
+
+<script>
+   cargarDataTable($("#tblSolicitudes"),"Elementos Devolutivos",5)
+</script>
+{% load static %}
+<script src="{% static 'js/verSolicitudes.js' %}"></script>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}

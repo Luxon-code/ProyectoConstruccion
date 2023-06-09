@@ -43,6 +43,8 @@ urlpatterns = [
     path('elemento/<str:codigo>', views.getElemento),
     path('elementos/', views.getElementos),
     path('newSolicitud/', views.newSolicitud),
+    path('vistaVerSolicitudes/',views.vistaVerSolicitudes),
+    path('detalleSolicitud/<int:id>',views.getDetalleSolicitud)
 ]
 
 if settings.DEBUG:
