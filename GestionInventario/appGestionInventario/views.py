@@ -589,12 +589,30 @@ def newSolicitud(request):
 
     return JsonResponse(retorno)
 
-def vistaVerSolicitudes(request):
+def vistaVerSolicitudesIntructor(request):
     if request.user.is_authenticated:
         retorno = {"user": request.user,
                    "rol": request.user.groups.get().name,
                    'solicitudes': SolicitudElemento.objects.filter(solUsuario=request.user).all(),}
         return render(request, "instructor/verSolicitudes.html", retorno)
+    else:
+        mensaje = "Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+def vistaVerSolicitudesAprovadas(request):
+    if request.user.is_authenticated:
+        retorno = {"user": request.user,
+                   "rol": request.user.groups.get().name,
+                   'solicitudes': SolicitudElemento.objects.filter(solEstado='Aprobada').all(),}
+        return render(request, "administrador/SolicitudesAprobadas.html", retorno)
+    else:
+        mensaje = "Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+def vistaVerSolicitudesPorAprobar(request):
+    if request.user.is_authenticated:
+        retorno = {"user": request.user,
+                   "rol": request.user.groups.get().name,
+                   'solicitudes': SolicitudElemento.objects.filter(solEstado='Solicitada').all(),}
+        return render(request, "administrador/SolicitudesPorAprobar.html", retorno)
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
@@ -605,6 +623,7 @@ def getDetalleSolicitud(request,id):
     for detalle in detalleDeLaSolicitud:
         if detalle.detUnidadMedida != None:
             det = {
+                'idSolicitud':detalle.detSolicitud.id,
                 'codigoElemento': detalle.detElemento.eleCodigo,
                 'NombreElemento': detalle.detElemento.eleNombre,
                 'cantidad': detalle.detCantidadRequerida,
@@ -612,6 +631,7 @@ def getDetalleSolicitud(request,id):
             }
         else:
              det = {
+                'idSolicitud':detalle.detSolicitud.id,
                 'codigoElemento': detalle.detElemento.eleCodigo,
                 'NombreElemento': detalle.detElemento.eleNombre,
                 'cantidad': detalle.detCantidadRequerida,
@@ -620,3 +640,33 @@ def getDetalleSolicitud(request,id):
         detSolicitud.append(det)
     retorno = {"detalleSolicitud":detSolicitud}
     return JsonResponse(retorno)
+
+def AprobarSolicitud(request,id):
+    estado = False
+    try:
+        with transaction.atomic():
+            solicitud = SolicitudElemento.objects.get(pk=id)
+            solicitud.solEstado = 'Aprobada'
+            solicitud.save()
+            estado = True
+            mensaje = "Solicitud Aprobada"
+    except Error as error:
+        transaction.rollback()
+        mensaje = f"{error}"
+    
+    retorno = {
+        'estado': estado,
+        'mensaje':mensaje
+    }
+    
+    return JsonResponse(retorno)
+
+def listarSolicitudes(request):
+    if request.user.is_authenticated:
+        retorno = {"user": request.user,
+                   "rol": request.user.groups.get().name,
+                   'solicitudes': SolicitudElemento.objects.all(),}
+        return render(request, "administrador/verSolicitudes.html", retorno)
+    else:
+        mensaje = "Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})

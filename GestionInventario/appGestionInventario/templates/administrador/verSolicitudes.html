@@ -3,11 +3,11 @@
     {% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "instructor/menu.html" %}
+    {% include "administrador/menu.html" %}
 {%endblock %}
 {% block contenido %}
 <br>
-<h3 class="text-center fw-bold">MIS SOLICITUDES</h3>
+<h3 class="text-center fw-bold">LISTA DE SOLICITUDES</h3>
 
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
     <br>
@@ -69,7 +69,7 @@
     </div>
   </div>
 <script>
-   cargarDataTable($("#tblSolicitudes"),"Mis Solicitudes",5)
+   cargarDataTable($("#tblSolicitudes"),"LISTA DE SOLICITUDES",5)
 </script>
 {% load static %}
 <script src="{% static 'js/verSolicitudes.js' %}"></script>

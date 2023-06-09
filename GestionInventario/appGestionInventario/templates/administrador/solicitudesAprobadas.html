@@ -3,11 +3,11 @@
     {% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "instructor/menu.html" %}
+    {% include "administrador/menu.html" %}
 {%endblock %}
 {% block contenido %}
 <br>
-<h3 class="text-center fw-bold">MIS SOLICITUDES</h3>
+<h3 class="text-center fw-bold">SOLICITUDES APROBADAS</h3>
 
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
     <br>
@@ -20,7 +20,7 @@
                 <th>Proyecto</th>
                 <th>Fecha Requerida</th>
                 <th>Estado</th>
-                <th>Ver detalle</th>
+                <th>Acccion</th>
             </tr>
         </thead>
         <tbody>
@@ -31,7 +31,7 @@
                     <td>{{solicitud.solProyecto}}</td>
                     <td>{{solicitud.solFechaHoraRequerida}}</td>
                     <td>{{solicitud.solEstado}}</td>
-                    <td class="d-flex justify-content-center"><a onclick="verDetalleSolicitud({{solicitud.id}})" data-bs-toggle="modal" data-bs-target="#modalDetalle" class="icon fs-4"><i class="bi bi-eye"></i></a></td>
+                    <td class="d-flex justify-content-center"><a onclick="verDetalleSolicitud({{solicitud.id}})" data-bs-toggle="modal" data-bs-target="#modalDetalle" class="icon fs-4"><i class="bi bi-pencil-square"></i></a></td>
                 </tr>
             {% endfor %} 
         </tbody>
@@ -69,7 +69,7 @@
     </div>
   </div>
 <script>
-   cargarDataTable($("#tblSolicitudes"),"Mis Solicitudes",5)
+   cargarDataTable($("#tblSolicitudes"),"Solicitudes Aprobadas",5)
 </script>
 {% load static %}
 <script src="{% static 'js/verSolicitudes.js' %}"></script>
