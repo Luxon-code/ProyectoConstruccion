@@ -135,8 +135,8 @@ AUTH_USER_MODEL = 'appGestionInventario.User'
 GOOGLE_RECAPTCHA_SECRET_KEY = '6Le90uklAAAAADSBX0UHsES9FRQASHU-tLFQEuDI'
 
 #variables configuración correo
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_PORT=587
-EMAIL_HOST_USER="jt9906157@gmail.com" 
-EMAIL_HOST_PASSWORD='bwmrocrmkxngtbdv' 
+EMAIL_HOST="sandbox.smtp.mailtrap.io"
+EMAIL_PORT="2525"
+EMAIL_HOST_USER="8193035cda119f" 
+EMAIL_HOST_PASSWORD='6d9bbe39c0895e' 
 EMAIL_USE_TLS=True

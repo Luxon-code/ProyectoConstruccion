@@ -60,7 +60,7 @@ def registrarUsuario(request):
             user.groups.add(rol)
             # si el rol es Administrador se habilita para que tenga acceso al sitio web del administrador
             if (rol.name == "Administrador"):
-                user.is_staff = True  # problemas cuando se es administrador
+                user.is_staff = True 
             # guardamos el usuario con lo que tenemos
             user.save()
             # llamamos a la funcion generarPassword
@@ -577,7 +577,42 @@ def newSolicitud(request):
 
             estado = True
             mensaje = "Solicitud Enviada"
-
+            #Enviar correo al usuario que hizo la solicitud
+            asunto = 'Registro Solicitud De Elementos Inventario CIES-NEIVA'
+            mensajeEmail = f'Cordial saludo, <b>{request.user.first_name} {request.user.last_name}</b>, nos permitimos.\
+                informarle que hemos recibido su solicitud en nuestro sistema de gestion de inventario \
+                del Centro de la Industria, la Empresa y los Servicios CIES de la ciudad de Neiva.<br><br>\
+                <b>Datos de la Solicitud</b><br>\
+                <br><b>Ficha: </b> {ficha.ficCodigo}\
+                <br><b>Programa: </b> {ficha.ficNombre}\
+                <br><b>Proyecto: </b> {nombre}\
+                <br><b>Fecha Inicial: </b> {fechaRequerida}\
+                <br><b>Fecha Final: </b> {fechaDevolver}\
+                <br>El administrador procesará su solicitud para su revición y aprovación.\
+                <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
+                http://gestioninventario.sena.edu.co.'
+            thread = threading.Thread(
+                target=enviarCorreo, args=(asunto, mensajeEmail, request.user.email))
+            thread.start()
+            #Enviar correo al los administradores del sistema
+            usuariosAdmin = User.objects.filter(is_staff=True).all()
+            for usuario in usuariosAdmin:
+                asunto = 'Registro Solicitud De Elementos Inventario CIES-NEIVA'
+                mensajeEmail = f'Cordial saludo, <b>{usuario.first_name} {usuario.last_name}</b>, nos permitimos.\
+                    informarle que hemos recibido la solicitud de <b>{request.user.first_name} {request.user.last_name}</b> en nuestro sistema de gestion de inventario \
+                    del Centro de la Industria, la Empresa y los Servicios CIES de la ciudad de Neiva.<br><br>\
+                    <b>Datos de la Solicitud</b><br>\
+                    <br><b>Ficha: </b> {ficha.ficCodigo}\
+                    <br><b>Programa: </b> {ficha.ficNombre}\
+                    <br><b>Proyecto: </b> {nombre}\
+                    <br><b>Fecha Inicial: </b> {fechaRequerida}\
+                    <br><b>Fecha Final: </b> {fechaDevolver}<br>\
+                    Le pedimos que procese lo mas pronto esta solicitud para su revisión y aprovación.<br>\
+                    <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
+                    http://gestioninventario.sena.edu.co.'
+                thread = threading.Thread(
+                    target=enviarCorreo, args=(asunto, mensajeEmail, usuario.email))
+                thread.start()
     except Error as error:
         transaction.rollback()
         mensaje = f"{error}"
