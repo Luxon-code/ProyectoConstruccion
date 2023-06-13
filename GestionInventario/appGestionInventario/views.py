@@ -305,11 +305,7 @@ def asistenteSolicitudes(request):
 
 def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
-        cantidadMaterial = DetalleEntradaMaterial.objects.values(
-            'detMaterial').annotate(cantidad=Sum('detCantidad'))
-        print(cantidadMaterial)
         retorno = {"materiales": Material.objects.all(),
-                   'cantidades': cantidadMaterial,
                    "user": request.user,
                    "rol": request.user.groups.get().name}
         return render(request, "asistente/vistaGestionarMateriales.html", retorno)
@@ -654,6 +650,8 @@ def vistaVerSolicitudesPorAprobar(request):
 
 def getDetalleSolicitud(request,id):
     detalleDeLaSolicitud = DetalleSolicitud.objects.filter(detSolicitud=id)
+    # cantidadMaterial = DetalleEntradaMaterial.objects.values(
+    #         'detMaterial').annotate(cantidad=Sum('detCantidad'))
     detSolicitud = []
     for detalle in detalleDeLaSolicitud:
         if detalle.detUnidadMedida != None:
@@ -662,7 +660,7 @@ def getDetalleSolicitud(request,id):
                 'codigoElemento': detalle.detElemento.eleCodigo,
                 'NombreElemento': detalle.detElemento.eleNombre,
                 'cantidad': detalle.detCantidadRequerida,
-                'unidadMedidad': detalle.detUnidadMedida.uniNombre
+                'unidadMedidad': detalle.detUnidadMedida.uniNombre,
             }
         else:
              det = {
@@ -688,7 +686,23 @@ def AprobarSolicitud(request,id):
     except Error as error:
         transaction.rollback()
         mensaje = f"{error}"
-    
+    if estado :
+        #Enviar correo al usuario que hizo la solicitud
+        asunto = 'Solicitud De Elementos Inventario CIES-NEIVA'
+        mensajeEmail = f'Cordial saludo, <b>{solicitud.solUsuario.first_name} {solicitud.solUsuario.last_name}</b>, nos permitimos.\
+            informarle que hemos aprobado su solicitud en nuestro sistema de gestion de inventario \
+            del Centro de la Industria, la Empresa y los Servicios CIES de la ciudad de Neiva.<br><br>\
+            <b>Datos de la Solicitud</b><br>\
+            <br><b>Ficha: </b> {solicitud.solFicha.ficCodigo}\
+            <br><b>Programa: </b> {solicitud.solFicha.ficNombre}\
+            <br><b>Proyecto: </b> {solicitud.solProyecto}\
+            <br><b>Fecha Inicial: </b> {solicitud.solFechaHoraRequerida}\
+            <br><b>Fecha Final: </b> {solicitud.solFechaHoraDevolver}\
+            <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
+            http://gestioninventario.sena.edu.co.'
+        thread = threading.Thread(
+            target=enviarCorreo, args=(asunto, mensajeEmail, solicitud.solUsuario.email))
+        thread.start()
     retorno = {
         'estado': estado,
         'mensaje':mensaje
