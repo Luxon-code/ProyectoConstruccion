@@ -46,7 +46,7 @@
           <h5 class="modal-title text-white" id="modalDetalleLabel">Detalle de la solicitud</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="overflow: auto;">
             <h3 class="text-center">Atender Solicitud</h3>
             <table class="table  table-hover">
                 <thead>
@@ -69,7 +69,7 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">Atender</button>
+          <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" onclick="atenderSolicitud()">Atender</button>
           <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cerrar</button>
         </div>
       </div>

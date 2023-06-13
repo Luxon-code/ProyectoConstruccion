@@ -719,3 +719,27 @@ def listarSolicitudes(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+    
+def AtenderSolicitud(request,id):
+    if request.method == "POST":
+        estado = False
+        try:
+            with transaction.atomic():
+                detalleDeLaSolicitud = DetalleSolicitud.objects.filter(detSolicitud=id)
+                for detalle in detalleDeLaSolicitud:
+                    cantidad = int(request.POST.get(f'cant{detalle.detElemento.eleCodigo}'))
+                    observacion = request.POST.get('observaciones')
+                    detSolicitud = DetalleSolicitud.objects.get(pk=detalle.id)
+                    salida = SalidaDetalleSolicitud(salCantidadEntregada=cantidad,salObservaciones=observacion,
+                                                    salDetalleSolicitud=detSolicitud)
+                    salida.save()
+                solicitud = SolicitudElemento.objects.get(pk=id)
+                solicitud.solEstado = 'Atendida'
+                solicitud.save()
+                estado=True
+                mensaje='Solicitud Atendida Correctamente'
+        except Error as error:
+            transaction.rollback()
+            mensaje = f"{error}"
+        retorno = {"estado": estado, "mensaje": mensaje}
+        return JsonResponse(retorno)
