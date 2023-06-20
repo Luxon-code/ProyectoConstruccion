@@ -743,3 +743,32 @@ def AtenderSolicitud(request,id):
             mensaje = f"{error}"
         retorno = {"estado": estado, "mensaje": mensaje}
         return JsonResponse(retorno)
+
+def vistaGestionarInventario(request): 
+    if request.user.is_authenticated:
+        listaElementos=Elemento.objects.all()
+        entradaMateriales= DetalleEntradaMaterial.objects.values('detMaterial__matElemento').annotate(cantidad=Sum('detCantidad'))
+        salidaMateriales = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detElemento').annotate(cantidad=Sum('salCantidadEntregada'))
+        listaInventario=[]
+        for elemento in listaElementos:
+            if elemento.eleTipo == "MAT":
+                elementoInventario = {
+                "codigo": elemento.eleCodigo,
+                "nombre": elemento.eleNombre,
+                "entrada": 0,
+                "salida":0,
+                "saldo":0
+                }
+                for entrada in entradaMateriales:
+                    if elemento.id == entrada ['detMaterial__matElemento']: 
+                        elementoInventario['entrada' ]=entrada['cantidad']
+                for salida in salidaMateriales:
+                    if elemento.id == salida['salDetalleSolicitud__detElemento']: 
+                        elementoInventario['salida']=salida['cantidad']
+                elementoInventario['saldo'] = int(elementoInventario['entrada']) - int(elementoInventario['salida']) 
+                listaInventario.append(elementoInventario)
+        retorno = {"listaInventario": listaInventario}
+        return render(request,"administrador/gestionarInventario.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request,"frmIniciarSesion.html",{"mensaje" :mensaje})

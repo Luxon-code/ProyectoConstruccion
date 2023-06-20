@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark verdeSena">
     <div class="container-fluid">
       <a class="navbar-brand" href="/inicioAdministrador/">
-        {% if user.userFoto != "False" %}
+        {% if user.userFoto != "" %}
           <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
         {% else %}  
           <img src="../media/user-logo.png" alt="No foto" style="width:40px;" class="rounded-pill">
@@ -38,7 +38,7 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Gestionar Inventario</a>
+            <a class="nav-link" href="/vistaGestionarInventario/">Gestionar Inventario</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/salir/">Salir</a>
