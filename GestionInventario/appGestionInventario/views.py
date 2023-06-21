@@ -16,6 +16,8 @@ import threading
 from smtplib import SMTPException
 from django.http import JsonResponse
 from django.db.models import Sum, Avg, Count
+import matplotlib.pyplot as plt
+import os
 # Create your views here.
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
@@ -668,7 +670,7 @@ def getDetalleSolicitud(request,id):
                 'codigoElemento': detalle.detElemento.eleCodigo,
                 'NombreElemento': detalle.detElemento.eleNombre,
                 'cantidad': detalle.detCantidadRequerida,
-                'unidadMedidad': 'No tiene'
+                'unidadMedidad': 'Unidad'
             }
         detSolicitud.append(det)
     retorno = {"detalleSolicitud":detSolicitud}
@@ -772,3 +774,58 @@ def vistaGestionarInventario(request):
     else:
         mensaje="Debe iniciar sesión"
         return render(request,"frmIniciarSesion.html",{"mensaje" :mensaje})
+    
+def vistaReporteGrafico(request):
+    if request.user.is_authenticated:
+        listaElementos = Elemento.objects.all()
+        salidaMateriales = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detElemento') \
+                .annotate(cantidad=Sum('salCantidadEntregada'))
+                
+        instructores = User.objects.all()
+        cantidadSolicitudes = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detSolicitud__solUsuario')\
+            .annotate(cantidad = Count(SalidaDetalleSolicitud.id) )
+                
+        xElementos=[]
+        yCantidadSolicitada=[]
+        colores=[]
+        for elemento in listaElementos:                      
+            for salida in salidaMateriales:
+                if elemento.id == salida['salDetalleSolicitud__detElemento']:
+                    yCantidadSolicitada.append(int(salida['cantidad'])) 
+                    xElementos.append(elemento.eleNombre)
+                    color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+                    colores.append(color)      
+                    break
+                
+        textprops = {"fontsize":6}              
+        plt.title("Elementos Solicitados")  
+        plt.pie(yCantidadSolicitada,labels=xElementos,autopct="%0.1f %%",textprops=textprops, colors=colores)    
+        rutaImagen = os.path.join(settings.MEDIA_ROOT+ "\\" + "grafica1.png")    
+        plt.savefig(rutaImagen)  
+        
+        xInstructores=[]
+        yCantidadSolicitudes=[]
+        
+        colores=[]
+        for cantidad in cantidadSolicitudes:
+            yCantidadSolicitudes.append(int(cantidad['cantidad']))
+            for instructor in instructores:
+                if cantidad['salDetalleSolicitud__detSolicitud__solUsuario']==instructor.id:
+                    xInstructores.append(instructor.first_name+ " " + instructor.last_name)
+                    color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+                    colores.append(color) 
+                    break
+                
+        plt.close()        
+        plt.title("Solicitudes Por Instructor") 
+        plt.bar(xInstructores,yCantidadSolicitudes,color=colores)  
+        plt.xlabel("Instructores")
+        plt.ylabel("Cantidad Solicitudes")
+        rutaImagen = os.path.join(settings.MEDIA_ROOT+ "\\" + "grafica2.png")    
+        plt.savefig(rutaImagen)  
+            
+        plt.close()
+        return render(request,"administrador/reportesEstadisticos.html")  
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
