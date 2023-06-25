@@ -15,6 +15,12 @@ a{
         padding-bottom: 10vh;
     }
 }
+.button-excel{
+    background-color: green;
+}
+.buttons-pdf{
+    background-color: red;
+}
 
 #cbRolMenu:focus{
     background-color:rgb(57, 169, 0);

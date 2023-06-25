@@ -86,18 +86,10 @@ function cargarDataTable(tabla,titulo,col){
                     titleAttr: 'Registros a mostrar',
                     className: 'selectTable'
                 },
-               /* {
-                    extend: 'copyHtml5',
-                    title: empresa,
-                    messageTop: titulo + "       Fecha: "+hoy,                           
-                    exportOptions: {
-                        columns:columnas
-                    }
-                },*/
-
                 {
                     extend: 'pdfHtml5',
-                    footer: true,                    
+                    footer: true,
+                    className: 'bg-danger',                    
                     title: empresa,
                     messageTop: titulo,
                     orientation: orientacion,
@@ -172,6 +164,7 @@ function cargarDataTable(tabla,titulo,col){
                 {
                     extend: 'excelHtml5',                   
                     title: empresa,
+                    className: 'bg-success',
                     messageTop: titulo + "       Fecha: "+hoy,                  
                     exportOptions: {
                         columns: columnas
