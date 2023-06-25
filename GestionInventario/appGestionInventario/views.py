@@ -210,8 +210,9 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
 
 def vistaGestionarElementos(request):
     if request.user.is_authenticated:
-        retorno = {"devolutivos": Devolutivo.objects.all(
-        ), "user": request.user, "rol": request.user.groups.get().name}
+        retorno = {"devolutivos": Devolutivo.objects.all(),
+                   "ubicaciones": UbicacionFisica.objects.all(),
+                   "user": request.user, "rol": request.user.groups.get().name}
         return render(request, "asistente/vistaGestionarElementos.html", retorno)
     else:
         mensaje = "Debe iniciar sesión"
@@ -559,10 +560,14 @@ def newSolicitud(request):
                 solProyecto=nombre, solFechaHoraRequerida=fechaRequerida, solFechaHoraDevolver=fechaDevolver, solEstado=estado, solFicha=ficha, solUsuario=request.user)
             solicitud.save()
 
+            detalleCorreo = []
+
             for e in elementos:
                 elemento = Elemento.objects.get(eleCodigo=e['codigo'])
                 cantidad = e['cantidad']
 
+                detalleCorreo.append([elemento.eleNombre, cantidad])
+    
                 if e['unidad'] != "":
                     unidad = UnidadMedida.objects.get(uniNombre=e['unidad'])
                     detalle = DetalleSolicitud(
@@ -573,6 +578,16 @@ def newSolicitud(request):
 
                 detalle.save()
 
+            tabla = "<table class='table table-bordered text-center fw-bold' border='1'><thead><tr><th>Elemento</th><th>Cantidad</th></tr></thead><tbody>"
+            
+            for det in detalleCorreo:
+                tabla += f"""<tr>
+                                <td> {det[0]} </td>
+                                <td> {det[1]} </td>
+                            </tr>"""
+                                
+            tabla += "</tbody></table>"
+            
             estado = True
             mensaje = "Solicitud Enviada"
             #Enviar correo al usuario que hizo la solicitud
@@ -586,6 +601,8 @@ def newSolicitud(request):
                 <br><b>Proyecto: </b> {nombre}\
                 <br><b>Fecha Inicial: </b> {fechaRequerida}\
                 <br><b>Fecha Final: </b> {fechaDevolver}\
+                <br><br><b>Relación de Elementos Solicitados</b>\
+                {tabla}\
                 <br>El administrador procesará su solicitud para su revición y aprovación.\
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                 http://gestioninventario.sena.edu.co.'
@@ -605,6 +622,8 @@ def newSolicitud(request):
                     <br><b>Proyecto: </b> {nombre}\
                     <br><b>Fecha Inicial: </b> {fechaRequerida}\
                     <br><b>Fecha Final: </b> {fechaDevolver}<br>\
+                    <br><br><b>Relación de Elementos Solicitados</b>\
+                    {tabla}\
                     Le pedimos que procese lo mas pronto esta solicitud para su revisión y aprovación.<br>\
                     <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                     http://gestioninventario.sena.edu.co.'

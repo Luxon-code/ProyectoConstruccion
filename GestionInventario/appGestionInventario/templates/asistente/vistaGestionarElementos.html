@@ -19,6 +19,7 @@
                 <th>Codigo Propio</th>
                 <th>Nombre</th>
                 <th>Descripcion</th>
+                <th>Ubicacion</th>
                 <th>Tipo</th>
                 <th>Estado</th>
                 <th>Foto</th>
@@ -31,6 +32,14 @@
                     <td>{{devolutivo.devElemento.eleCodigo}}</td>
                     <td>{{devolutivo.devElemento.eleNombre}}</td>
                     <td>{{devolutivo.devDescripcion}}</td>
+                    {% for ubicacion in ubicaciones%}
+                        {% if ubicacion.ubiElemento_id == devolutivo.id %}
+                        <td>
+                            <p>Deposito: {{ubicacion.ubiDeposito}} Estante: {{ubicacion.ubiEstante}}</p>
+                            <p>Entrepaño: {{ubicacion.ubiEntrepano}} Locker: {{ubicacion.ubiLocker}}</p>
+                        </td>
+                        {% endif %}
+                    {% endfor %}
                     <td>{{devolutivo.devElemento.eleTipo}}</td>
                     <td>{{devolutivo.devElemento.eleEstado}}</td>
                     <td><img src="../media/{{devolutivo.devFoto}}" width="50" height="50"></td>
