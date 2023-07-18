@@ -18,6 +18,8 @@ from django.http import JsonResponse
 from django.db.models import Sum, Avg, Count
 import matplotlib.pyplot as plt
 import os
+from fpdf import FPDF
+from appGestionInventario.pdfSolicitudes import PDF
 # Create your views here.
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
@@ -190,7 +192,7 @@ def SolicitarElementos(request):
     return render(request, "instructor/solicitarElementos.html", json)
 
 
-def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
+def enviarCorreo(asunto=None, mensaje=None, destinatario=None,archivo=None):
     remitente = settings.EMAIL_HOST_USER
     template = get_template('enviarCorreo.html')
     contenido = template.render({
@@ -203,6 +205,8 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
         correo = EmailMultiAlternatives(
             asunto, mensaje, remitente, [destinatario])
         correo.attach_alternative(contenido, 'text/html')
+        if archivo != None:
+            correo.attach_file(archivo)
         correo.send(fail_silently=True)
     except SMTPException as error:
         print(error)
@@ -590,6 +594,9 @@ def newSolicitud(request):
             
             estado = True
             mensaje = "Solicitud Enviada"
+            #generar pdf
+            instructor = request.user.first_name + " " + request.user.last_name
+            archivo = generarPdf(detalleCorreo,instructor)
             #Enviar correo al usuario que hizo la solicitud
             asunto = 'Registro Solicitud De Elementos Inventario CIES-NEIVA'
             mensajeEmail = f'Cordial saludo, <b>{request.user.first_name} {request.user.last_name}</b>, nos permitimos.\
@@ -607,7 +614,7 @@ def newSolicitud(request):
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                 http://gestioninventario.sena.edu.co.'
             thread = threading.Thread(
-                target=enviarCorreo, args=(asunto, mensajeEmail, request.user.email))
+                target=enviarCorreo, args=(asunto, mensajeEmail, request.user.email,archivo))
             thread.start()
             #Enviar correo al los administradores del sistema
             usuariosAdmin = User.objects.filter(is_staff=True).all()
@@ -848,3 +855,11 @@ def vistaReporteGrafico(request):
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+    
+def generarPdf(datos,instructor):
+    pdf = PDF()
+    pdf.add_page()
+    pdf.set_font('Arial','B',12)
+    pdf.mostrarDatos(datos,instructor)
+    pdf.output(f'media/inventario.pdf','F')
+    return "media/inventario.pdf"
