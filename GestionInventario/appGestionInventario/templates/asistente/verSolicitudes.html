@@ -1,0 +1,79 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<h3 class="text-center fw-bold">LISTA DE SOLICITUDES</h3>
+
+<div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+    <br>
+    <br>
+    <table id="tblSolicitudes" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center verdeSena text-white">
+                <th>Ficha</th>
+                <th>Programa</th>
+                <th>Proyecto</th>
+                <th>Fecha Requerida</th>
+                <th>Estado</th>
+                <th>Ver detalle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud  in solicitudes %}
+                <tr>
+                    <td>{{solicitud.solFicha.ficCodigo}}</td>
+                    <td>{{solicitud.solFicha.ficNombre}}</td>
+                    <td>{{solicitud.solProyecto}}</td>
+                    <td>{{solicitud.solFechaHoraRequerida}}</td>
+                    <td>{{solicitud.solEstado}}</td>
+                    <td class="d-flex justify-content-center"><a onclick="verDetalleSolicitud({{solicitud.id}})" data-bs-toggle="modal" data-bs-target="#modalDetalle" class="icon fs-4"><i class="bi bi-eye"></i></a></td>
+                </tr>
+            {% endfor %} 
+        </tbody>
+    </table>
+</div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="modalDetalle" tabindex="-1" aria-labelledby="modalDetalleLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header verdeSena">
+          <h5 class="modal-title text-white" id="modalDetalleLabel">Detalle de la solicitud</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table  table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Elemento</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Unidad</th>
+                  </tr>
+                </thead>
+                <tbody id="tblDetalle">
+                    
+                </tbody>
+              </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+   cargarDataTable($("#tblSolicitudes"),"LISTA DE SOLICITUDES",5)
+</script>
+{% load static %}
+<script src="{% static 'js/verSolicitudes.js' %}"></script>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}

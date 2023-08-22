@@ -302,9 +302,10 @@ def asistenteInicio(request):
 
 def asistenteSolicitudes(request):
     if request.user.is_authenticated:
-        datosSesion = {"user": request.user,
-                       "rol": request.user.groups.get().name}
-        return render(request, "asistente/solicitudes.html", datosSesion)
+        retorno = {"user": request.user,
+                   "rol": request.user.groups.get().name,
+                   'solicitudes': SolicitudElemento.objects.filter(solEstado='Aprobada').all(),}
+        return render(request, "asistente/SolicitudesAprobadas.html", retorno)
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
@@ -743,7 +744,10 @@ def listarSolicitudes(request):
         retorno = {"user": request.user,
                    "rol": request.user.groups.get().name,
                    'solicitudes': SolicitudElemento.objects.all(),}
-        return render(request, "administrador/verSolicitudes.html", retorno)
+        if request.user.groups.get().name == "Administrador": 
+            return render(request, "administrador/verSolicitudes.html", retorno)
+        else:
+            return render(request, "asistente/verSolicitudes.html",retorno)
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
