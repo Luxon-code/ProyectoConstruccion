@@ -6,10 +6,14 @@ class PDF(FPDF):
         self.image('media/logo-sena.png', 10, 8, 33)
         # Arial bold 15
         self.set_font('Arial', 'B', 15)
+        self.ln()
         # Move to the right
-        self.cell(80)
+        self.cell(60)
         # Title
-        self.cell(30, 10, 'GESTION INVENTARIO CIES',align='C')
+        self.cell(80, 10, 'GESTIÓN INVENTARIO CIES', 0, 0, 'C')
+        self.ln()
+        self.cell(60)
+        self.cell(80, 10, 'REPORTE DE ELEMENTOS SOLICITADOS', 0, 0, 'C')
         # Line break
         self.ln(30)
 
@@ -35,14 +39,14 @@ class PDF(FPDF):
         self.set_font('Arial', 'B',12)
         self.set_fill_color(57, 169, 0)
         self.set_text_color(255,255,255)
-        self.cell(80,10,"Elemento",border=1,align='C',fill=True)
-        self.cell(30,10,"Cantidad",border=1,align='C',fill=True)
+        self.cell(95,10,"Elemento",border=1,align='C',fill=True)
+        self.cell(95,10,"Cantidad",border=1,align='C',fill=True)
         self.ln()
         
         self.set_font('Arial',"",12)
         self.set_text_color(0,0,0)
         for dato in datos:
-            self.cell(80,10,dato[0],border=1,align='C')
-            self.cell(30,10,str(dato[1]),border=1,align='C')
+            self.cell(95,10,dato[0],border=1,align='C')
+            self.cell(95,10,str(dato[1]),border=1,align='C')
             self.ln()
         

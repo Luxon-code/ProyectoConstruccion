@@ -49,9 +49,12 @@ urlpatterns = [
     path('verSolicitudesPorAprobar/',views.vistaVerSolicitudesPorAprobar),
     path('aprobarSolicitud/<int:id>',views.AprobarSolicitud),
     path('verSolicitudes/',views.listarSolicitudes),
+    path('vistaDevolucionElementos/',views.vistaDevolucionElementos),
     path('atenderSolicitud/<int:id>',views.AtenderSolicitud),
     path('vistaGestionarInventario/',views.vistaGestionarInventario),
     path('resportesEstadisticos/',views.vistaReporteGrafico),
+    path('obtenerDetalleSalidaElementos/',views.obtenerDetalleSalidaElementos),
+    path('registroDevolucionElementos/',views.registroDevolucionElementos),
 ]
 
 if settings.DEBUG:

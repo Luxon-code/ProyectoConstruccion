@@ -203,7 +203,7 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None,archivo=None):
     })
     try:
         correo = EmailMultiAlternatives(
-            asunto, mensaje, remitente, [destinatario])
+            asunto, mensaje, remitente, destinatario)
         correo.attach_alternative(contenido, 'text/html')
         if archivo != None:
             correo.attach_file(archivo)
@@ -615,7 +615,7 @@ def newSolicitud(request):
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                 http://gestioninventario.sena.edu.co.'
             thread = threading.Thread(
-                target=enviarCorreo, args=(asunto, mensajeEmail, request.user.email,archivo))
+                target=enviarCorreo, args=(asunto, mensajeEmail, [request.user.email],archivo))
             thread.start()
             #Enviar correo al los administradores del sistema
             usuariosAdmin = User.objects.filter(is_staff=True).all()
@@ -636,7 +636,7 @@ def newSolicitud(request):
                     <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                     http://gestioninventario.sena.edu.co.'
                 thread = threading.Thread(
-                    target=enviarCorreo, args=(asunto, mensajeEmail, usuario.email))
+                    target=enviarCorreo, args=(asunto, mensajeEmail, [usuario.email]))
                 thread.start()
     except Error as error:
         transaction.rollback()
@@ -778,32 +778,53 @@ def AtenderSolicitud(request,id):
 
 def vistaGestionarInventario(request): 
     if request.user.is_authenticated:
-        listaElementos=Elemento.objects.all()
-        entradaMateriales= DetalleEntradaMaterial.objects.values('detMaterial__matElemento').annotate(cantidad=Sum('detCantidad'))
-        salidaMateriales = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detElemento').annotate(cantidad=Sum('salCantidadEntregada'))
-        listaInventario=[]
+        listaElementos = Elemento.objects.all()
+        entradaMateriales = DetalleEntradaMaterial.objects.values('detMaterial__matElemento') \
+                    .annotate(cantidad=Sum('detCantidad'))                    
+        salidaMateriales = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detElemento') \
+                .annotate(cantidad=Sum('salCantidadEntregada'))  
+                
+        devolucionMateriales = DevolucionElemento.objects.values('devSalida__salDetalleSolicitud__detElemento') \
+            .annotate(cantidad=Sum('devCantidadDevolucion'))          
+        listaInventario = []        
         for elemento in listaElementos:
             if elemento.eleTipo == "MAT":
                 elementoInventario = {
-                "codigo": elemento.eleCodigo,
-                "nombre": elemento.eleNombre,
-                "entrada": 0,
-                "salida":0,
-                "saldo":0
+                    "codigo": elemento.eleCodigo,
+                    "nombre": elemento.eleNombre,
+                    "entrada": 0,
+                    "salida":0,
+                    "saldo":0
                 }
-                for entrada in entradaMateriales:
-                    if elemento.id == entrada ['detMaterial__matElemento']: 
-                        elementoInventario['entrada' ]=entrada['cantidad']
-                for salida in salidaMateriales:
-                    if elemento.id == salida['salDetalleSolicitud__detElemento']: 
-                        elementoInventario['salida']=salida['cantidad']
-                elementoInventario['saldo'] = int(elementoInventario['entrada']) - int(elementoInventario['salida']) 
-                listaInventario.append(elementoInventario)
-        retorno = {"listaInventario": listaInventario}
+            else:
+                elementoInventario = {
+                    "codigo": elemento.eleCodigo,
+                    "nombre": elemento.eleNombre,
+                    "entrada": 1,
+                    "salida":0,
+                    "saldo":0
+                }
+                
+            for entrada in entradaMateriales:
+                if elemento.id == entrada['detMaterial__matElemento']:
+                    elementoInventario['entrada']=entrada['cantidad']
+                        
+            for entrada in devolucionMateriales:
+                if elemento.id == entrada['devSalida__salDetalleSolicitud__detElemento']:
+                    elementoInventario['entrada'] = elementoInventario['entrada'] + entrada['cantidad']
+                        
+            for salida in salidaMateriales:
+                if elemento.id == salida['salDetalleSolicitud__detElemento']:
+                    elementoInventario['salida']=salida['cantidad']   
+                        
+            elementoInventario['saldo']  = int(elementoInventario['entrada']) - int(elementoInventario['salida'])
+                      
+            listaInventario.append(elementoInventario)                   
+        retorno = {"listaInventario":listaInventario}
         return render(request,"administrador/gestionarInventario.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request,"frmIniciarSesion.html",{"mensaje" :mensaje})
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
     
 def vistaReporteGrafico(request):
     if request.user.is_authenticated:
@@ -865,5 +886,94 @@ def generarPdf(datos,instructor):
     pdf.add_page()
     pdf.set_font('Arial','B',12)
     pdf.mostrarDatos(datos,instructor)
-    pdf.output(f'media/inventario.pdf','F')
-    return "media/inventario.pdf"
+    pdf.output(f'media/solicitud.pdf','F')
+    return "media/solicitud.pdf"
+
+def vistaDevolucionElementos(request):
+    solicitudes = SolicitudElemento.objects.filter(solEstado='Atendida')    
+    salidaDetalleSolicitudes = SalidaDetalleSolicitud.objects.all()
+    retorno = {"solicitudes":solicitudes,"salidaDetalleSolicitudes": salidaDetalleSolicitudes}
+    return render(request,"asistente/vistaDevoluciones.html",retorno)
+
+def obtenerDetalleSalidaElementos(request):
+    if request.method == 'POST':
+        try:
+            estado=False
+            idSolicitud = int(request.POST['idSolicitud'])
+            listaDetalle = SalidaDetalleSolicitud.objects.filter(salDetalleSolicitud__detSolicitud=idSolicitud)
+            
+            print(listaDetalle)
+            lista=[]
+            for detalle in listaDetalle:
+                detalleJson={
+                    "idSalidaDetalleSolicitud":detalle.id,
+                    "idSolicitud": detalle.salDetalleSolicitud.detSolicitud.id,
+                    "idElemento": detalle.salDetalleSolicitud.detElemento.id,
+                    "nombreElemento":detalle.salDetalleSolicitud.detElemento.eleNombre,
+                    "codigoElemento":detalle.salDetalleSolicitud.detElemento.eleCodigo,
+                    "cantidadEntregada": detalle.salCantidadEntregada,
+                    "cantidadDevolucion":0
+                    
+                }
+                lista.append(detalleJson)
+            mensaje="listado de elementos de la solicitud"
+            estado=True
+        except Error as error:
+            transaction.rollback()
+            mensaje=f"{error}"
+        
+        retorno={"estado":estado, "mensaje":mensaje, "detalleSolicitud":lista}
+        return JsonResponse(retorno)
+    
+def registroDevolucionElementos(request):
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                estado=False
+                observaciones = request.POST['observaciones']
+                detalleElementosDevolucion = json.loads(request.POST['detalleElementosDevolucion']) 
+                #se crea para enviarlo en el correo del solicitante   
+                detalleDevolucionCorreo = []
+                for detalle in detalleElementosDevolucion:
+                    idSolicitud = int(detalle['idSolicitud'])
+                    salidaDetalleSolicitud = SalidaDetalleSolicitud.objects.get(pk=int(detalle['idSalidaDetalleSolicitud']))
+                    cantidadDevolucion = int(detalle['cantidadDevolucion'])
+                    devolucionElemento = DevolucionElemento(devSalida=salidaDetalleSolicitud,devUsuario=request.user,
+                                devCantidadDevolucion=cantidadDevolucion,devObservaciones=observaciones)
+                    
+                    devolucionElemento.save()
+                    elemento = salidaDetalleSolicitud.salDetalleSolicitud.detElemento
+                    detalleDevolucionCorreo.append([elemento.eleNombre,salidaDetalleSolicitud.salCantidadEntregada,cantidadDevolucion])
+                    
+                #ahora actualizar el estado de la solicitud
+                solicitud = SolicitudElemento.objects.get(pk=idSolicitud)
+                instructor = solicitud.solUsuario
+                solicitud.solEstado="Finalizada"
+                solicitud.save()
+                generarPdfDevoluciones(detalleDevolucionCorreo,instructor.first_name+" "+instructor.last_name)
+                #se puede enviar correo al instructor con información de lo que se le entrega
+                archivo = 'media/devolucion.pdf'
+                mensaje=f'Cordial saludo,<b>{instructor.first_name} {instructor.last_name}</b>, nos permitimos \
+                    informarle que que se ha registrado la devolución de elementos entragados a usted \
+                    para el desarrollo de actividades de formación con sus aprendices.\
+                    <br><br>Se anexa documento en formato pdf como soporte de la devolución de los elementos.\
+                    Muchas gracias por su compromiso en la devolución oportuna de los elementos.'
+                asunto='Registro Devolución de Elementos Inventario CIES-NEIVA' 
+                thread = threading.Thread(target=enviarCorreo,
+                                args=(asunto,mensaje,[instructor.email],archivo) )
+                thread.start()
+                estado=True
+                mensaje="Se ha registrado la devolución de los elementos entregados al instructor"
+        except Error as error:  
+            transaction.rollback()        
+            mensaje=f"{error}"
+        retorno={"estado":estado, "mensaje":mensaje}
+        return JsonResponse(retorno)
+    
+def generarPdfDevoluciones(datos,instructor):
+    from appGestionInventario.pdfDevoluciones import Pdf
+    doc = Pdf()
+    doc.add_page()
+    doc.set_font("Arial","B",12)
+    doc.mostrarDatos(datos,instructor)
+    doc.output(f'media/devolucion.pdf', "F")

@@ -1,0 +1,97 @@
+{% extends "index.html" %}
+{% block encabezado %}   
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+    {% load static%}
+
+    <script src="{%static '../static/js/solicitud.js' %}"></script>
+    <br>
+    {% for solicitud in solicitudes %}
+        <script> cargarSolicitudes("{{solicitud.id}}","{{solicitud.solEstado}}");</script>
+    {% endfor %}
+    <h3 class="text-center fw-bold">DEVOLUCIÓN DE MATERIALES</h3>    
+    <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+        {% comment %} <a href="/vistaRegistrarSolicitud/"><button class="btn btn-secondary mb-2">Agregar</button></a>     {% endcomment %}
+        <table id="tblSolicitudes" class="mt-3 table table-bordered">
+            <thead>
+                <tr class="text-center verdeSena text-white">
+                    <th>Ficha</th>                   
+                    <th>Programa</th>
+                    <th>Proyecto</th>
+                    <th>Instructor</th>                   
+                    <th>Fecha a Devolver</th>   
+                    <th>Estado</th>                   
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for solicitud in solicitudes %}
+                    <tr>
+                        <td>{{solicitud.solFicha.ficCodigo}}</td>
+                        <td>{{solicitud.solFicha.ficNombre}}</td>
+                        <td>{{solicitud.solProyecto}}</td>
+                        <td>{{solicitud.solUsuario.first_name}} {{solicitud.solUsuario.last_name}}</td>
+                        <td class="text-center">{{solicitud.solFechaHoraDevolver}}</td>
+                        <td class="text-center">{{solicitud.solEstado}}</td>
+                      
+                        <td class="text-center">
+                            <a onclick="devolucionSolicitudes('{{solicitud.id}}')" class="icon fs-4"><i class="fa fa-edit" title="ver/Elementos"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        cargarDataTable( $("#tblSolicitudes"),"Solicitud de Elementos",6)
+    </script>
+
+    <!-- The Modal -->
+    <div class="modal" id="modalDetalleSolicitud">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">    
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Devolución de Elementos</h4>
+                <button type="button" class="btn-close bg-white text-white" data-bs-dismiss="modal"></button>
+            </div>    
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div id="vistaTablaElementos w-75 table-responsive" style="margin: 0 auto">
+                    <table class="table table-bordered table-stripped">
+                        <thead>
+                            <tr class="bg-secondary text-white text-center">
+                                <th>Código</th>
+                                <th>Elemento</th>                                   
+                                <th>Cantidad Entregada</th> 
+                                <th>Cantidad a Devolver</th>                           
+                            </tr>
+                        </thead>
+                        <tbody id="datosTablaElementos">
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <label for="txtObservaciones" class="fw-bold">Observaciones</label>
+                    <textarea name="txtObservaciones" id="txtObservaciones" cols="30" rows="5" class="form-control"
+                    required placeholder="Ingrese aquí observaciones si lo requiere"></textarea>
+                </div> 
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnDevolucionElementos" data-bs-dismiss="modal">Confirmar Devolución</button>
+            </div>
+    
+        </div>
+        </div>
+    </div>  
+
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}
