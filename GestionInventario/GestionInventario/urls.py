@@ -19,6 +19,7 @@ from django.urls import path
 from appGestionInventario import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('inicioAdministrador/',views.inicioAdministrador),
@@ -55,6 +56,10 @@ urlpatterns = [
     path('resportesEstadisticos/',views.vistaReporteGrafico),
     path('obtenerDetalleSalidaElementos/',views.obtenerDetalleSalidaElementos),
     path('registroDevolucionElementos/',views.registroDevolucionElementos),
+    path("reset_password/",auth_views.PasswordResetView.as_view(template_name="recuperarPassword/PasswordResetView.html"),name="password_reset"),
+    path("reset_password_send/",auth_views.PasswordResetDoneView.as_view(template_name="recuperarPassword/PasswordResetDoneView.html"),name="password_reset_done"),
+    path("reset/<uidb64>/<token>/",auth_views.PasswordResetConfirmView.as_view(template_name="recuperarPassword/PasswordResetConfirmView.html"),name="password_reset_confirm"),
+    path("reset_password_complete/",auth_views.PasswordResetCompleteView.as_view(template_name="recuperarPassword/PasswordResetCompleteView.html"),name="password_reset_complete"),
 ]
 
 if settings.DEBUG:
