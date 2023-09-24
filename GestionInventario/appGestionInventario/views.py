@@ -977,3 +977,124 @@ def generarPdfDevoluciones(datos,instructor):
     doc.set_font("Arial","B",12)
     doc.mostrarDatos(datos,instructor)
     doc.output(f'media/devolucion.pdf', "F")
+    
+    
+def vistaHojaVidaDevolutivo(request,id):
+    devolutivo = Devolutivo.objects.get(pk=id)
+    hojaVida  = HojaVidaDevolutivo.objects.filter(hojaDevolutivo=devolutivo).first()
+    retorno = {'devolutivo':devolutivo,'hojaVida':hojaVida}
+    return render(request, "asistente/frmRegistrarHojaVidaDevolutivo.html",retorno) 
+
+def registrarHojaVida(request):
+    if request.method == 'POST':
+        try:
+            estado=False
+            marcaMotor = request.POST.get("txtMarcaMotor",None)
+            modeloMotor = request.POST.get("txtModelo",None)
+            fabricanteMotor = request.POST.get("txtFabricanteMotor",None)
+            tipoCombustibe = request.POST.get("cbTipoCombustible",None)
+            tipoAceiteMotor = request.POST.get("txtTipoAceiteMotor",None)
+            potenciaMotor = request.POST.get("txtPotenciaMotor",None)
+            rangoTrabajo = request.POST.get("txtRangoTrabajo",None)
+            voltaje = request.POST.get("txtVoltaje",None)
+            peso = float(request.POST.get("txtPeso",0))
+            idDevolutivo = int(request.POST["idDevolutivo"])
+            idHojaVida = request.POST["idHojaVida"]
+            if idHojaVida:
+                devolutivo = Devolutivo.objects.get(pk=idDevolutivo)
+                hojaVida = HojaVidaDevolutivo.objects.get(pk=idHojaVida)
+                hojaVida.hojaMarcaMotor=marcaMotor
+                hojaVida.hojaModelo=modeloMotor
+                hojaVida.hojaFabricante=fabricanteMotor
+                hojaVida.hojaTipoCombustible=tipoCombustibe
+                hojaVida.hojaTipoAceiteMotor=tipoAceiteMotor
+                hojaVida.hojaPotenciaMotor=potenciaMotor
+                hojaVida.hojaRangoDeTrabajo=rangoTrabajo
+                hojaVida.hojaVoltaje = voltaje
+                hojaVida.hojaPeso=peso
+                hojaVida.save()
+                mensaje="Se ha Actualizado la hoja de vida del Elemento"  
+                estado=True  
+            else:
+                devolutivo = Devolutivo.objects.get(pk=idDevolutivo)
+                hojaVida= HojaVidaDevolutivo(hojaDevolutivo=devolutivo,hojaMarcaMotor=marcaMotor,
+                                            hojaModelo=modeloMotor, hojaFabricante=fabricanteMotor,
+                                            hojaTipoCombustible=tipoCombustibe, hojaTipoAceiteMotor=tipoAceiteMotor,
+                                            hojaPotenciaMotor=potenciaMotor, hojaRangoDeTrabajo=rangoTrabajo,
+                                            hojaVoltaje = voltaje, hojaPeso=peso)
+                hojaVida.save()
+                mensaje="Se ha registrado la hoja de vida del Elemento"  
+                estado=True         
+        except Error as error: 
+            mensaje=error
+            
+        retorno = {"estado":estado, "mensaje":mensaje,"devolutivo":devolutivo,"hojaVida":hojaVida}
+        
+        return render(request, "asistente/frmRegistrarHojaVidaDevolutivo.html",retorno) 
+
+
+#falta hacer que funcione
+def vistaGestionarMantenimientos(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='Instructor').exists() \
+            or request.user.groups.filter(name='Administrador').exists() :
+            elementosDevolutivos = Devolutivo.objects.all()
+            ubicacion = UbicacionFisica.objects.all()
+            retorno = {"listaElementosDevolutivos":elementosDevolutivos,"ubicacionFisica":ubicacion}
+            print(elementosDevolutivos)
+            return render(request,"instructor/vistaGestionarMantenimientos.html",retorno)
+        else:
+            return redirect("/vistaLogin/")
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje}) 
+    
+def vistaRegistrarMantenimiento(request,id):   
+    devolutivo = Devolutivo.objects.get(pk=id)
+    retorno = {"devolutivo":devolutivo}
+    return render (request,"instructor/frmRegistrarMantenimiento.html",retorno)
+
+def registrarMantenimiento(request):
+    """_summary_
+        Función que registra mantenimiento realizado
+        a uno de los equipos - maquinaria con los que cuenta
+        la línea de construcción para formación
+    Args:
+        request (_type_): Objeto request con los datos 
+        necesarios para el mantenimieto como: fecha,
+        instructor encargados, observaciones realizadas,
+        y personal apoyo en la realización_
+
+    Returns:
+        _type_: Retorna a la vista con un objeto Json
+    """
+    if request.method == 'POST':
+        estado=False
+        try:
+            idDevolutivo = int(request.POST["idDevolutivo"])
+            devolutivo = Devolutivo.objects.get(pk=idDevolutivo)
+            tipoMantenimiento = request.POST["cbTipoMantenimiento"]
+            instructor = request.user
+            realizdoPor = request.POST["txtRealizadoPor"]
+            observaciones = request.POST["txtObservaciones"]
+            fechaMantenimiento = request.POST["txtFechaMantenimiento"]
+            mantenimiento = Mantenimento(manElemento = devolutivo.devElemento, manTipo = tipoMantenimiento, 
+                                         manUsuario = instructor, manObservaciones=observaciones, 
+                                         manRealizadoPor=realizdoPor, manFechaMantenimiento = fechaMantenimiento)
+            mantenimiento.save()
+            mensaje="Mantenimiento registrado Satisfactoriamente"
+            estado=True
+            
+        except Error as error: 
+            mensaje=error
+            
+        retorno = {"estado":estado, "mensaje":mensaje}
+        return render (request,"instructor/frmRegistrarMantenimiento.html",retorno) 
+
+ 
+def vistaMantenimientoPorEquipo(request,id):
+    elemento = Elemento.objects.get(pk=id)
+    devolutivo = Devolutivo.objects.filter(devElemento=elemento).first()
+    listaMantenimientos = Mantenimento.objects.filter(manElemento=elemento)
+    retorno={"devolutivo":devolutivo,"listaMantenimientos":listaMantenimientos}
+    return render(request, 'instructor/vistaMantenimientoEquipo.html',retorno)

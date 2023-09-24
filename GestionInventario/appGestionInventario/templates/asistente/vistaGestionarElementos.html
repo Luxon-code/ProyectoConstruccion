@@ -16,22 +16,22 @@
     <table id="tblElementos" class="table table-bordered table-hover">
         <thead>
             <tr class="text-center verdeSena text-white">
-                <th>Codigo Propio</th>
+                <th>Código Propio</th>    
+                <th>Placa SENA</th>                                  
                 <th>Nombre</th>
-                <th>Descripcion</th>
-                <th>Ubicacion</th>
-                <th>Tipo</th>
-                <th>Estado</th>
-                <th>Foto</th>
-                <th>Accion</th>
+                <th>Ubicación</th> 
+                <th>Tipo</th>                   
+                <th>Estado</th>   
+                <th>Foto</th>                   
+                <th>Hoja Vida</th>
             </tr>
         </thead>
         <tbody>
             {% for devolutivo in devolutivos %}
                 <tr>
                     <td>{{devolutivo.devElemento.eleCodigo}}</td>
+                    <td>{{devolutivo.devPlacaSena}}</td>                        
                     <td>{{devolutivo.devElemento.eleNombre}}</td>
-                    <td>{{devolutivo.devDescripcion}}</td>
                     {% for ubicacion in ubicaciones%}
                         {% if ubicacion.ubiElemento_id == devolutivo.id %}
                         <td>
@@ -44,7 +44,7 @@
                     <td>{{devolutivo.devElemento.eleEstado}}</td>
                     <td><img src="../media/{{devolutivo.devFoto}}" width="50" height="50"></td>
                     <td class="text-center">
-                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
+                        <a class="icon"  href="/hojaVidaDevolutivo/{{devolutivo.id}}" ><i class="fa-solid fa-file-pen fa-fade fa-2xl"></i></a>
                     </td>
                 </tr>
             {% endfor %}

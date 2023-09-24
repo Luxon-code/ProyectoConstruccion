@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.utils import timezone
 # Create your models here.
+
+tiposMantenimiento = [('Predictivo','Predictivo'),('Correctivo','Correctivo'),]
 estadosMantenimiento = [
     ('Satisfactorio','Satisfactorio'),('Requiere Ajuste','Requiere Ajuste'),
     ('Requiere Reparación','Requiere Reparación'),('Requiere Remplazo','Requiere Remplazo'),
@@ -99,6 +101,21 @@ class Devolutivo(models.Model):
     
     def __str__(self)->str:
         return f"{self.devElemento}"
+    
+class HojaVidaDevolutivo(models.Model):
+    hojaDevolutivo = models.OneToOneField(Devolutivo,on_delete=models.PROTECT,db_comment="Hace relación al devolutivo FK")
+    hojaMarcaMotor = models.CharField(max_length=45, null=True,db_comment="Marca del Motor del Elemento")
+    hojaModelo = models.CharField(max_length=45, null=True,db_comment="Modelo del Motor")
+    hojaFabricante = models.CharField(max_length=45, null=True,db_comment="Fabricante del Elemento")
+    hojaTipoCombustible  = models.CharField(max_length=45, null=True,db_comment="Tipo de Combustible")    
+    hojaTipoAceiteMotor = models.CharField(max_length=45, null=True,db_comment="Tipo de Aceite del Motor")    
+    hojaPotenciaMotor = models.CharField(max_length=45, null=True,db_comment="Potencia del Motor")    
+    hojaRangoDeTrabajo = models.CharField(max_length=45, null=True,db_comment="Rango de Trabajo dada en RPM")    
+    hojaVoltaje = models.CharField(max_length=45, null=True,db_comment="Tipo de Voltaje 110V - 220V")    
+    hojaPeso = models.FloatField(null=True,db_comment="Peso del elemento en KG")    
+  
+    def __str__(self)->str:
+        return f"{self.hojaDevolutivo}"
 
 class Material(models.Model):
     matReferencia = models.TextField(null=True,db_comment="Referencia o descripción del material")
@@ -198,31 +215,24 @@ class DevolucionElemento(models.Model):
         return f"{self.devSalida} -> {self.devCantidadDevolucion}"
     
     
-class EstadoMantenimiento(models.Model):
-    estNombre = models.CharField(max_length=50,unique=True,choices=estadosMantenimiento,
-                                  db_comment="Nombre del estado del mantenimiento")
-    fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
-    fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
-        
-    def __str__(self)->str:
-        return f"{self.estNombre}"
-    
 class Mantenimento(models.Model):
     manElemento = models.ForeignKey(Elemento,on_delete=models.PROTECT,
                                 db_comment="Hace referencia al elemento que se le realizó el mantenimiento")
+    manTipo = models.CharField(max_length=50,null=True,choices=tiposMantenimiento,
+                                  db_comment="Tipo de Mantenimiento")
     manUsuario = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,
-                                db_comment="Hace referencia al usuario que realizó el mantenimiento")
-    manEstado = models.ForeignKey(EstadoMantenimiento,on_delete=models.PROTECT,
-                                db_comment="Hace referencia al estado del mantenimiento")
+                                db_comment="Hace referencia al usuario que realizó el mantenimiento")  
     manObservaciones = models.TextField(null=True,  db_comment="Observaciones que se quieran agregar \
-                                al mantenimiento")
-    manFechaHoraMantenimiento = models.DateTimeField(db_comment="Hace referencia a la fecha y hora que \
-                                se realizó el mantenimiento")
+                                al mantenimiento")    
+    manRealizadoPor = models.TextField(null=True,  db_comment="Relación de aprendices o personal externo \
+                                que realizó y/o apoyo en el mantenimiento")
+    manFechaMantenimiento=models.DateTimeField(null=True,db_comment="Fecha y hora que se realizó el mantenimiento")
+   
     fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
     fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
     
     def __str__(self)->str:
-        return f"{self.manElemento}-{self.manEstado}"
+        return f"{self.manElemento}-{self.manTipo}--{self.manEstado}"
     
 class UbicacionFisica(models.Model):
     ubiElemento  = models.ForeignKey(Elemento,on_delete=models.PROTECT,db_comment="Hace referencia al elemento")
