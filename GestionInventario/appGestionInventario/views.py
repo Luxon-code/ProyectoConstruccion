@@ -1044,7 +1044,7 @@ def vistaGestionarMantenimientos(request):
             print(elementosDevolutivos)
             return render(request,"instructor/vistaGestionarMantenimientos.html",retorno)
         else:
-            return redirect("/vistaLogin/")
+            return redirect("/inicioAsistente/")
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje}) 

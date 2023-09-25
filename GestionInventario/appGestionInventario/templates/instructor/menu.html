@@ -3,9 +3,9 @@
       <div class="dropdown">
         <a class="navbar-brand dropdown-toggle" href="#" data-bs-toggle="dropdown">
           {% if user.userFoto != "" %}
-            <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
+            <img src="/media/{{user.userFoto}}" alt="Foto Usuario" style="width:40px;" class="rounded-pill"> 
           {% else %}  
-            <img src="../media/user-logo.png" alt="No foto" style="width:40px;" class="rounded-pill">
+            <img src="/media/user-logo.png" alt="No foto" style="width:40px;" class="rounded-pill">
           {% endif %}
         </a>
         <ul class="dropdown-menu" style="width:300px">  
@@ -41,6 +41,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/vistaVerSolicitudes/">Ver mis solicitudes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/vistaGestionarMantenimientos/">Gestionar Mantenimientos</a>
           </li>
         </ul>
       </div>
