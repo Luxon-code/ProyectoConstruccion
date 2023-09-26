@@ -33,6 +33,74 @@ def inicioAdministrador(request):
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
 
+def vistaGestionarCuenta(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='Administrador').exists():
+            retorno = {"user":request.user}  
+            return render(request,'administrador/gestionarCuenta.html',retorno)
+        elif request.user.groups.filter(name='Asistente').exists() :
+            retorno = {"user":request.user}  
+            return render(request,'asistente/gestionarCuenta.html',retorno)
+        else:
+            retorno = {"user":request.user}  
+            return render(request,'instructor/gestionarCuenta.html',retorno) 
+    else:
+        mensaje = "Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+    
+def modificarDatosUserPerfil(request,id):
+    """
+    Modifica los datos de un usuario en su perfil y guarda los cambios en la base de datos.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        id (int): El ID del usuario cuyos datos se desean modificar.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que redirige al perfil del usuario con un mensaje de éxito o error.
+    """
+    if request.method == "POST":
+        try:
+            nombres = request.POST["txtNombres"]
+            apellidos = request.POST["txtApellidos"]
+            correo = request.POST["txtCorreo"]
+            foto = request.FILES.get("fileFoto", False)
+            with transaction.atomic():
+                user = User.objects.get(pk=id)
+                user.username=correo
+                user.first_name=nombres
+                user.last_name=apellidos
+                user.email=correo
+                if(foto):
+                    if user.userFoto == "":
+                        user.userFoto=foto
+                    else:
+                        os.remove('./media/'+str(user.userFoto))
+                        user.userFoto=foto
+                user.save()
+                mensaje = "Datos Modificados Correctamente"
+                retorno = {"mensaje": mensaje,"estado":True}
+                if user.groups.filter(name='Administrador').exists():
+                    return render(request,'administrador/gestionarCuenta.html',retorno)
+                elif user.groups.filter(name='Asistente').exists() :
+                    return render(request,'asistente/gestionarCuenta.html',retorno)
+                else:
+                    return render(request,'instructor/gestionarCuenta.html',retorno) 
+        except Error as error:
+            transaction.rollback()
+            if 'user.username' in str(error):
+                mensaje = "Ya existe un usuario con este correo electronico"
+            elif 'user.email' in str(error):
+                mensaje = "Ya existe un usuario con ese correo electronico"
+            else:
+                mensaje = error
+        retorno = {"mensaje":mensaje,"estado":False}
+        if user.groups.filter(name='Administrador').exists():
+            return render(request,'administrador/gestionarCuenta.html',retorno)
+        elif user.groups.filter(name='Asistente').exists() :
+            return render(request,'asistente/gestionarCuenta.html',retorno)
+        else:
+            return render(request,'instructor/gestionarCuenta.html',retorno) 
 
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
@@ -51,7 +119,7 @@ def registrarUsuario(request):
         apellidos = request.POST["txtApellidos"]
         correo = request.POST["txtCorreo"]
         tipo = request.POST["cbTipo"]
-        foto = request.FILES.get("fileFoto", False)
+        foto = request.FILES.get("fileFoto")
         idRol = int(request.POST["cbRol"])
         with transaction.atomic():
             # crear un objeto de tipo User
@@ -88,7 +156,7 @@ def registrarUsuario(request):
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                 http://gestioninventario.sena.edu.co.'
             thread = threading.Thread(
-                target=enviarCorreo, args=(asunto, mensaje, user.email))
+                target=enviarCorreo, args=(asunto, mensaje, [user.email]))
             thread.start()
             return redirect("/vistaGestionarUsuarios/", retorno)
     except Error as error:
@@ -115,6 +183,42 @@ def generarPassword():
         password += ''.join(random.choice(caracteres))
     return password
 
+def cambiarEstadoUsuario(request,id):
+    """
+    Cambia el estado (activo/inactivo) de un usuario en el sistema y devuelve una respuesta JSON con el resultado.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        id (int): El ID del usuario cuyo estado se desea cambiar.
+
+    Returns:
+        JsonResponse: Una respuesta JSON que indica si el cambio de estado fue exitoso y contiene un mensaje correspondiente.
+    """
+    estado = False
+    try:
+        with transaction.atomic():
+            user = User.objects.get(pk=id)
+            if user.is_superuser:
+                mensaje = "Este usuario no se le puede cambiar el estado, ya que es el superuser del sistema"
+                estado = False
+            else:
+                if user.is_active:
+                    user.is_active = False
+                    mensaje = "Inactivo"
+                else:
+                    user.is_active = True
+                    mensaje = "Activo"
+                user.save()
+                estado = True
+    except Error as error:
+        transaction.rollback()
+        mensaje = f"{error}"
+    retorno = {
+        'estado': estado,
+        'mensaje':mensaje
+    }
+    
+    return JsonResponse(retorno)
 
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
