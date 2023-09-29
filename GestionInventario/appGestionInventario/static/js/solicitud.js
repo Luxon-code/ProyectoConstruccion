@@ -101,7 +101,7 @@ function mostrarDetalleDevolucionElementos(){
         datos += "<td class='text-center'>" + detalle.codigoElemento + "</td>";     
         datos += "<td>" + detalle.nombreElemento + "</td>";          
         datos += "<td class='text-center'>" + detalle.cantidadEntregada + "</td>";       
-        datos += "<td> <input type='number' class='form-control was-validated' max="+detalle.cantidadEntregada+" min='0' value='0' id=ce"+detalle.idElemento+" ></td>";
+        datos += "<td> <input type='number' class='form-control was-validated' max="+detalle.cantidadEntregada+" min='0' value='0' id=ce"+detalle.idElemento+" onkeydown='return false' onpaste='return false'></td>";
         datos += "</tr>";
     });
     //agregar a la tabla con id datosTablaMateriales

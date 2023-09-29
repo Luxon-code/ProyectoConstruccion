@@ -75,6 +75,7 @@
                     <div class="mb-3">
                         <label for="ficha" class="form-label">Ficha:</label>
                         <select class="form-select form-select-sm" name="ficha" id="ficha">
+                            <option value="">Seleccione</option>
                             {% for f in fichas %}
                             <option value="{{f.ficCodigo}}">{{f.ficCodigo}}-{{f.ficNombre}}</option>
                             {% endfor %}

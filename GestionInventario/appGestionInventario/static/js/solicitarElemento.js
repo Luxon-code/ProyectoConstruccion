@@ -157,10 +157,10 @@ function enviarSolicitud() {
         elementos.push(elemento)
     })
 
-    if (nameProyect == "") {
+    if (nameProyect == "" || ficha == "" || fechaR=="" || fechaD == "") {
         Swal.fire(
-            'Nombre Del Proyecto',
-            'El campo esta vacio',
+            'Enviar Solicitud',
+            'Faltan Datos',
             'warning'
         )
         return
@@ -190,6 +190,10 @@ function enviarSolicitud() {
             if (data.estado) {
                 document.getElementById("detalleElementos").innerHTML = ""
                 myModal.toggle()
+                document.getElementById("nameProyect").value = ""
+                document.getElementById("ficha").value = ""
+                document.getElementById("dateProyectRequerida").value = ""
+                document.getElementById("dateProyectDevolver").value = ""
                 Swal.fire(
                     'Solicitud Enviada',
                     data.mensaje,
