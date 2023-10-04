@@ -419,6 +419,7 @@ def vistaGestionarMateriales(request):
     if request.user.is_authenticated:
         retorno = {"materiales": Material.objects.all(),
                    "user": request.user,
+                   "ubicaciones": UbicacionFisica.objects.all(),
                    "rol": request.user.groups.get().name}
         return render(request, "asistente/vistaGestionarMateriales.html", retorno)
     else:
@@ -924,8 +925,15 @@ def vistaGestionarInventario(request):
             elementoInventario['saldo']  = int(elementoInventario['entrada']) - int(elementoInventario['salida'])
                       
             listaInventario.append(elementoInventario)                   
-        retorno = {"listaInventario":listaInventario}
-        return render(request,"administrador/gestionarInventario.html",retorno)
+        if request.user.groups.filter(name='Administrador').exists():
+            retorno = {"listaInventario":listaInventario}
+            return render(request,"administrador/gestionarInventario.html",retorno)
+        elif request.user.groups.filter(name='Asistente').exists() :
+            retorno = {"listaInventario":listaInventario}
+            return render(request,"asistente/gestionarInventario.html",retorno)
+        else:
+            retorno = {"listaInventario":listaInventario}
+            return render(request,"instructor/gestionarInventario.html",retorno) 
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})

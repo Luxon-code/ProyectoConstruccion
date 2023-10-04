@@ -20,6 +20,7 @@
                 <th>Nombre</th>
                 <th>Referencia</th>
                 <th>Marca</th>
+                <th>Ubicacion</th>
                 <th>Estado</th>
             </tr>
         </thead>
@@ -30,6 +31,14 @@
                     <td>{{material.matElemento.eleNombre}}</td>
                     <td>{{material.matReferencia}}</td>
                     <td>{{material.matMarca}}</td>
+                    {% for ubicacion in ubicaciones%}
+                        {% if ubicacion.ubiElemento_id == material.matElemento.id %}
+                            <td>
+                                <p>Deposito: {{ubicacion.ubiDeposito}} Estante: {{ubicacion.ubiEstante}}</p>
+                                <p>Entrepaño: {{ubicacion.ubiEntrepano}} Locker: {{ubicacion.ubiLocker}}</p>
+                            </td>
+                        {% endif %}
+                    {% endfor %}
                     <td>{{material.matElemento.eleEstado}}</td>
                 </tr>
             {% endfor %}
@@ -41,7 +50,7 @@
 
 
 <script>
-    cargarDataTable($("#tblMateriales"),"Elementos Materiales",5)
+    cargarDataTable($("#tblMateriales"),"Elementos Materiales",6)
 </script>
 {%endblock %}
 {% block piePagina %}

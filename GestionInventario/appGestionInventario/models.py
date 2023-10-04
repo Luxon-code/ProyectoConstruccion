@@ -236,10 +236,10 @@ class Mantenimento(models.Model):
     
 class UbicacionFisica(models.Model):
     ubiElemento  = models.ForeignKey(Elemento,on_delete=models.PROTECT,db_comment="Hace referencia al elemento")
-    ubiDeposito = models.SmallIntegerField(db_comment="Número de bodega: 1,2,3,4..")    
-    ubiEstante = models.SmallIntegerField(null=True,db_comment="Número de bodega: 1,2,3,4..")
-    ubiEntrepano = models.SmallIntegerField(null=True,db_comment="Número de Entrepaño: 1,2,3,4..")
-    ubiLocker = models.SmallIntegerField(null=True,db_comment="Número de locker: 1,2,3,4..")
+    ubiDeposito = models.CharField(max_length=50,db_comment="Número de bodega: 1,2,3,4..")    
+    ubiEstante = models.CharField(max_length=50,null=True,db_comment="Número de bodega: 1,2,3,4..")
+    ubiEntrepano = models.CharField(max_length=50,null=True,db_comment="Número de Entrepaño: 1,2,3,4..")
+    ubiLocker = models.CharField(max_length=50,null=True,db_comment="Número de locker: 1,2,3,4..")
     fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
     fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
     

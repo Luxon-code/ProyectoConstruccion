@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<h3 class="text-center fw-bold">GESTIONAR INVENTARIO</h3>
+
+<div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+    <a href="/vistaRegistrarUsuario/"><button class="btn btn-secondary">Agregar</button></a>
+    <br>
+    <br>
+    <table id="tblInventario" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center verdeSena text-white">
+                <th>Codigo del Elemento</th>
+                <th>Nombre</th>
+                <th>Entradas</th>
+                <th>Salida</th>
+                <th>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for elemento in listaInventario %}
+                <tr>
+                    <td>{{elemento.codigo}}</td>
+                    <td>{{elemento.nombre}}</td>
+                    <td>{{elemento.entrada}}</td>
+                    <td>{{elemento.salida}}</td>
+                    <td>{{elemento.saldo}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- The Modal -->
+
+
+<script>
+    cargarDataTable($("#tblInventario"),"INVENTARIO",5)
+</script>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}
