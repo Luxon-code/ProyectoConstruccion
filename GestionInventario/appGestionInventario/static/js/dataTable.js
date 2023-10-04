@@ -89,7 +89,7 @@ function cargarDataTable(tabla,titulo,col){
                 {
                     extend: 'pdfHtml5',
                     footer: true,
-                    className: 'bg-danger',                    
+                    className: 'bg-danger text-white',                    
                     title: empresa,
                     messageTop: titulo,
                     orientation: orientacion,
@@ -164,7 +164,7 @@ function cargarDataTable(tabla,titulo,col){
                 {
                     extend: 'excelHtml5',                   
                     title: empresa,
-                    className: 'bg-success',
+                    className: 'bg-success text-white',
                     messageTop: titulo + "       Fecha: "+hoy,                  
                     exportOptions: {
                         columns: columnas
