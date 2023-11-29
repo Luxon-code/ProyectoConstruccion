@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'appGestionInventario',
+    'dbbackup',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +85,15 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR /'inventarioconstruccion.db',
+        
+
+#     }
+# }
 
 
 # Password validation
@@ -132,11 +143,153 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'appGestionInventario.User'
 
 #recaptcha
-GOOGLE_RECAPTCHA_SECRET_KEY = '6Le90uklAAAAADSBX0UHsES9FRQASHU-tLFQEuDI'
+GOOGLE_RECAPTCHA_SECRET_KEY = '6Lf2r3coAAAAAIs4RnLRtXZRVnfG8KTazeauAr0v'
 
 #variables configuración correo
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = '84f38167d449b3'
-EMAIL_HOST_PASSWORD = 'd230e02faa7d33'
-EMAIL_PORT = '2525'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'inventarioconstruccioncies@gmail.com'
+EMAIL_HOST_PASSWORD = 'bkugmqcaxgtdeqdi'
+EMAIL_PORT = 587
 EMAIL_USE_TLS=True
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'backup'}
+
+CRONJOBS = [
+    ('*/5 * * * *', 'appGestionInventario.backup.backup')
+]
+
+LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'formatters' : {
+            'standard' : {
+                'format' : '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+            },
+        },
+        'handlers': {
+            'celery.webapp' : {
+                'level' : 'ERROR',
+                'class' : 'django.utils.log.AdminEmailHandler',
+            },
+            'celery' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/celery.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+            'celery_chartConfigure' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/celery_chartConfigure.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+            'celery_register' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/celery_register.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+            'views.error' : {
+                'level' : 'ERROR',
+                'class' : 'django.utils.log.AdminEmailHandler',
+            },
+            'views' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/views.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+            'views_login' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/views_login.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+            'views_sendEmail' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/views_sendEmail.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+            'views_register' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/views_register.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+            'views_chartConfigure' : {
+                'level' : 'INFO',
+                'class' : 'logging.handlers.RotatingFileHandler',
+                'filename' : 'logs/views_chartConfigure.log',
+                'maxBytes' : 1024*1024*10, # 10MB
+                'backupCount' : 10,
+                'formatter' : 'standard',
+            },
+        },
+
+        'loggers': {
+            'celery.webapp' : {
+                'level' : 'ERROR',
+                'handlers' : ['celery.webapp'],
+                'propogate' : True,
+            },
+            'celery.webapp.task' : {
+                'level' : 'INFO',
+                'handlers' : ['celery'],
+                'propogate' : True,
+            },
+            'celery.webapp.chartConfigure' : {
+                'level' : 'INFO',
+                'handlers' : ['celery_chartConfigure'],
+                'propogate' : True,
+            },
+            'celery.webapp.register' : {
+                'level' : 'INFO',
+                'handlers' : ['celery_register'],
+                'propogate' : True,
+            },
+            'views.logger' : {
+                'level' : 'ERROR',
+                'handlers' : ['views.error'],
+                'propogate' : True,
+            },
+            'views.logger.login' : {
+                'level' : 'INFO',
+                'handlers' : ['views_login'],
+                'propogate' : True,
+            },
+            'views.logger.register' : {
+                'level' : 'INFO',
+                'handlers' : ['views_register'],
+                'propogate' : True,
+            },
+            'views.logger.chartConfigure' : {
+                'level' : 'INFO',
+                'handlers' : ['views_chartConfigure'],
+                'propogate' : True,
+            },
+            'views.logger.sendEmail' : {
+                'level' : 'INFO',
+                'handlers' : ['views_sendEmail'],
+                'propogate' : True,
+            },
+        },
+}
+
+if DEBUG and os.environ.get('RUN_MAIN', None) != 'true':
+    LOGGING = {}

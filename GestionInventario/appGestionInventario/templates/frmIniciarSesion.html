@@ -1,46 +1,51 @@
 {% extends "index.html" %}
 {% block encabezado %}
     {% include "encabezado.html" %}
-{%endblock %}
-{% block menu %}
-    {% include "menu.html" %}
-{%endblock %}
+{%endblock%}
 {% block contenido %}
 
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<div class="col-12 d-flex justify-content-center align-items-center mt-3" style="margin-bottom: 5rem; min-height: 75vh;">
-    <form action="/login/" method="post" class="was-validated">   
-        {%csrf_token%}    
-        <div class="card mb-2">
-            <div class="card-header verdeSena">
-                <h5 class="card-title text-center text-white my-2">INGRESAR AL SISTEMA</h5>
+<div> <h1 class="text-center fw-bold mt-3">SISTEMA GESTIÓN INVENTARIO LÍNEA CONSTRUCCIÓN</h1></div>
+<div class="col-12 d-flex justify-content-center align-items-center mt-2" style="margin-bottom: 6rem; min-height: 40vh;">
+    <div class="mt-2">
+        <form action="/login/" method="post" class="was-validated">   
+            {%csrf_token%}    
+            <div class="card">
+                <div class="card-header verdeSena">
+                    <h5 class="card-title text-center text-white my-2">INGRESAR AL SISTEMA</h5>
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa-solid fa-at"></i></span>
+                        <div class="form-floating">
+                            <input type="text" name="txtUsername" class="form-control" id="txtUsername" placeholder="name@example.com" required>
+                            <label for="floatingInput">Correo Electrónico</label>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="togglePassword" onclick="togglePasswordVisibility()"><i class="fas fa-eye"></i></span>
+                        <div class="form-floating">
+                            <input type="password" name="txtPassword" class="form-control" id="txtPassword" placeholder="Contraseña" required>
+                            <label for="floatingPassword">Contraseña</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-12 d-flex justify-content-center">
+                            <a href="{% url 'password_reset' %}" class="btn btn-link text-black" onclick="abrirModalRecuperarClave()">
+                                ¿Olvidaste tu contraseña?
+                            </a>                                        
+                        </div>
+                    </div>
+                    <div class="g-recaptcha" data-sitekey="6Lf2r3coAAAAAPnnfEt_SlWEsvFGXloEBWjGoOu2"></div>
+                    <div class="form-group row mt-2">
+                        <div class="col-lg-12 d-flex justify-content-center">                        
+                            <button type="submit" id="btnIniciarSesion" class="btn btn-secondary btn-sm" >Ingresar</button>
+                        </div>
+                    </div>
+                </div>         
             </div>
-            <div class="card-body">
-                <div class="form-floating mb-3">
-                    <input type="text" name="txtUsername" class="form-control" id="txtUsername" placeholder="name@example.com" required>
-                    <label for="floatingInput">Correo Electrónico</label>
-                </div>
-                  <div class="form-floating">
-                    <input type="password" name="txtPassword" class="form-control" id="txtPassword" placeholder="Contraseña" required>
-                    <label for="floatingPassword">Contraseña</label>
-                  </div>
-                <div class="form-group row">
-                    <div class="col-lg-12 d-flex justify-content-center">
-                        <a href="{% url 'password_reset' %}" class="btn btn-link text-black" onclick="abrirModalRecuperarClave()">
-                            ¿Olvidaste tu contraseña?
-                        </a>                                        
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-lg-12 d-flex justify-content-center">                        
-                        <button type="submit" id="btnIniciarSesion" class="btn btn-secondary btn-sm" >Ingresar</button>
-                    </div>
-                </div>
-            </div>         
-        </div>
-       <!-- 6Le90uklAAAAADSBX0UHsES9FRQASHU-tLFQEuDI  secret-->
-       <div class="g-recaptcha" data-sitekey="6Le90uklAAAAADaKKl93RsbOxKmjEiliXHgPA6ZH"></div>
-    </form>
+        </form>
+    </div>
 </div>
 <script>
     {% if mensaje %}
@@ -57,7 +62,20 @@
     });
     {% endif %}
 </script>
+<script>
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("txtPassword");
+        var toggleButton = document.getElementById("togglePassword");
 
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>'; // Cambia el ícono a un ojo tachado cuando se muestra la contraseña.
+        } else {
+            passwordInput.type = "password";
+            toggleButton.innerHTML = '<i class="fas fa-eye"></i>'; // Cambia el ícono a un ojo normal cuando se oculta la contraseña.
+        }
+    }
+</script>
 {%endblock %}
 {% block piePagina %}
     {% include "piePagina.html" %}

@@ -35,7 +35,7 @@
                     {% for ubicacion in ubicaciones%}
                         {% if ubicacion.ubiElemento_id == devolutivo.devElemento.id %}
                         <td>
-                            <p>Deposito: {{ubicacion.ubiDeposito}} Estante: {{ubicacion.ubiEstante}}</p>
+                            <p>Deposito: {{ubicacion.ubiDeposito.depNombre}} Estante: {{ubicacion.ubiEstante}}</p>
                             <p>Entrepaño: {{ubicacion.ubiEntrepano}} Locker: {{ubicacion.ubiLocker}}</p>
                         </td>
                         {% endif %}

@@ -6,13 +6,14 @@ const tiposElementos = {
 }
 
 function getElements() {
-    let url = `/elementos/`
+    let url = '/elementos/'
 
     fetch(url)
         .then(res => res.json())
         .then(data => {
             let html = ""
             let datalist = ""
+            console.log(data)
             data.elementos.forEach(elemento => {
                 html += `<div class="card my-1">
                         <div class="card-body d-flex align-items-center justify-content-between">
@@ -20,7 +21,7 @@ function getElements() {
                         <p class="card-text">${elemento.nombre}</p>
                         <p class="card-text">${elemento.descripcion ??= ""}</p>
                         </div>
-                        <button class="btn btn-primary" onclick="addElement('${elemento.codigo}')" data-bs-dismiss="offcanvas">Add</button>
+                        <button class="btn btn-secondary" onclick="addElement('${elemento.codigo}')" data-bs-dismiss="offcanvas">Agregar</button>
                         </div>
                         </div>`
                 datalist += `<option value="${elemento.codigo}">${elemento.nombre}</option>`
@@ -49,11 +50,12 @@ function addElement(codigo) {
         return true
     }
 
-    let url = `/elemento/${codigo}`
+    let url = `/elemento/${codigo}/`
 
     fetch(url)
         .then(res => res.json())
         .then(data => {
+            console.log(data)
             if (data.estado == false) {
                 Swal.fire(
                     'Material No Disponible',
@@ -157,7 +159,7 @@ function enviarSolicitud() {
         elementos.push(elemento)
     })
 
-    if (nameProyect == "" || ficha == "" || fechaR=="" || fechaD == "") {
+    if (nameProyect == "" || ficha == "" || fechaR == "" || fechaD == "") {
         Swal.fire(
             'Enviar Solicitud',
             'Faltan Datos',

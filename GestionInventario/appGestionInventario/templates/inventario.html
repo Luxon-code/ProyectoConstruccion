@@ -1,0 +1,33 @@
+<br>
+<h3 class="text-center fw-bold mt-1">GESTIONAR INVENTARIO</h3>
+<div class="w-75 table-responsive" style="margin: 0 auto;">
+    <table id="tblInventario" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center verdeSena text-white">
+                <th>Codigo del Elemento</th>
+                <th>Nombre</th>
+                <th>Entradas</th>
+                <th>Salida</th>
+                <th>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for elemento in listaInventario %}
+                <tr>
+                    <td>{{elemento.codigo}}</td>
+                    <td>{{elemento.nombre}}</td>
+                    <td class="text-center">{{elemento.entrada}}</td>
+                    <td class="text-center">{{elemento.salida}}</td>
+                    <td class="text-center">{{elemento.saldo}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- The Modal -->
+
+
+<script>
+    cargarDataTable($("#tblInventario"),"INVENTARIO",5)
+</script>

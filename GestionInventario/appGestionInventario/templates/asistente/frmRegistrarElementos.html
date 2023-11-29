@@ -8,7 +8,7 @@
 {% block contenido %}
     <br>
     <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
-        <form id="frmRegistrarUsuario" action="/registrarElemento/" method="post" enctype="multipart/form-data" class="needs-validation w-75" novalidate>                   
+        <form id="frmRegistrarElementos" action="/registrarElemento/" method="post" enctype="multipart/form-data" class="needs-validation w-75" novalidate>                   
             {% csrf_token%}
             <h3 class="text-center fw-bold">REGISTRAR ELEMENTOS DEVOLUTIVOS</h3>
             <br>
@@ -118,14 +118,13 @@
                 <div class="mt-3 col-lg-6">
                     <label for="txtDesposito" class="fw-bold"
                     >Deposito:</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="txtDesposito"
-                    name="txtDesposito"
-                    placeholder="Codigo del deposito"
-                    required
-                  />
+                    <select name="txtDesposito" id="txtDesposito" class="form-select" required>
+                        <option value="">Seleccione</option>
+                            {% for deposito in listaDepositos %}
+                                <option value="{{deposito.id}}">{{deposito.depNombre}}</option>
+                            {% endfor %}
+                    </select>
+                  
                   <div class="invalid-feedback">Por favor ingrese el numero del deposito.</div>                  
                 </div>
                 <div class="mt-3 col-lg-6">

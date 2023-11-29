@@ -17,7 +17,7 @@ tipoUsuario = [
     ('Aprendiz',"Aprendiz"),('Instructor', 'Instructor'),('Administrativo',"Administrativo"),
 ]
 tipoElemento = [
-    ('HER','Herramientas'),('MAQ','Maquinaria'),('EQU','Equipos'),('MAT','Materiales'),  
+    ('HER','Herramientas'),('MAQ','Maquinaria'),('EQU','Equipos'),('MAT','Materiales') 
 ]
 estadosElementos = [
     ('Bueno','Bueno'),('Regular','Regular'),('Malo','Malo'),    
@@ -140,7 +140,7 @@ class EntradaMaterial(models.Model):
     fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
     
     def __str__(self)->str:
-        return f"{self.entNumeroFactura}"
+        return f"{self.entNumeroFactura}- {self.entProveedor}"
     
 class DetalleEntradaMaterial(models.Model):
     detEntradaMaterial = models.ForeignKey(EntradaMaterial, on_delete=models.PROTECT,
@@ -233,10 +233,18 @@ class Mantenimento(models.Model):
     
     def __str__(self)->str:
         return f"{self.manElemento}-{self.manTipo}--{self.manEstado}"
+
+class Deposito(models.Model):
+    depNombre = models.CharField(max_length=50,db_comment="Nombre del Deposito")
+    fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
+    fechaHoraActualizacion = models.DateTimeField(auto_now=True,db_comment="Fecha y hora última actualización")
+    
+    def __str__(self)->str:
+        return f"{self.depNombre}"
     
 class UbicacionFisica(models.Model):
     ubiElemento  = models.ForeignKey(Elemento,on_delete=models.PROTECT,db_comment="Hace referencia al elemento")
-    ubiDeposito = models.CharField(max_length=50,db_comment="Número de bodega: 1,2,3,4..")    
+    ubiDeposito = models.ForeignKey(Deposito,on_delete=models.PROTECT,db_comment="Hace referencia al deposito o bodega")    
     ubiEstante = models.CharField(max_length=50,null=True,db_comment="Número de bodega: 1,2,3,4..")
     ubiEntrepano = models.CharField(max_length=50,null=True,db_comment="Número de Entrepaño: 1,2,3,4..")
     ubiLocker = models.CharField(max_length=50,null=True,db_comment="Número de locker: 1,2,3,4..")

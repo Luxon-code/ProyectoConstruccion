@@ -68,11 +68,14 @@ function AprobarSolicitud(){
 function atenderSolicitud(){
     let id = localStorage.idSolicitud
     let url = `/atenderSolicitud/${id}`
-    var data = new FormData
+    var data = new FormData()
     detalleSolicitud.forEach(element => {
         data.append(`cant${element.codigoElemento}`,document.getElementById(`txtCant${element.codigoElemento}`).value)
     });
     data.append('observaciones',txtObservaciones.value)
+
+    console.log(data)
+
     var options = {
         method: "POST",
         body:data,

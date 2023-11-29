@@ -20,6 +20,8 @@ import matplotlib.pyplot as plt
 import os
 from fpdf import FPDF
 from appGestionInventario.pdfSolicitudes import PDF
+import warnings
+warnings.simplefilter("ignore", UserWarning)
 # Create your views here.
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
@@ -175,8 +177,7 @@ def generarPassword():
     """
     longitud = 10
 
-    caracteres = string.ascii_lowercase + \
-        string.ascii_uppercase + string.digits + string.punctuation
+    caracteres = string.ascii_lowercase + string.ascii_uppercase + string.digits + string.punctuation
     password = ''
 
     for i in range(longitud):
@@ -257,8 +258,10 @@ def login(request):
     response = urllib.request.urlopen(req)
     result = json.loads(response.read().decode())
     print(result)
-    """ End reCAPTCHA validation """
+        # End reCAPTCHA validation """
+    
     if result['success']:
+    #if True:
         username = request.POST["txtUsername"]
         password = request.POST["txtPassword"]
         user = authenticate(username=username, password=password)
@@ -329,8 +332,9 @@ def vistaGestionarElementos(request):
 
 def vistaRegistrarElementos(request):
     if request.user.is_authenticated:
+        listaDepositos = Deposito.objects.all() 
         retorno = {"tipoElemento": tipoElemento, "estadoElemento": estadosElementos, "user": request.user,
-                   "rol": request.user.groups.get().name}
+                   "listaDepositos": listaDepositos,"rol": request.user.groups.get().name}
         return render(request, "asistente/frmRegistrarElementos.html", retorno)
     else:
         mensaje = "Debe iniciar sesión"
@@ -353,7 +357,7 @@ def registrarElementos(request):
         valor = float(request.POST['txtValor'])
         foto = request.FILES.get('fileFoto', False)
         # datos de la ubucacion fisica
-        deposito = request.POST['txtDesposito']
+        deposito = Deposito.objects.get(pk=int(request.POST['txtDesposito']))
         estante = request.POST.get('txtEstante', False)
         if estante == "":
             estante = 0
@@ -429,7 +433,8 @@ def vistaGestionarMateriales(request):
 
 def vistaRegistrarMateriales(request):
     if request.user.is_authenticated:
-        retorno = {"estadoElemento": estadosElementos, "user": request.user,
+        listaDepositos = Deposito.objects.all()
+        retorno = {"estadoElemento": estadosElementos, "user": request.user, "listaDepositos":listaDepositos,
                    "rol": request.user.groups.get().name}
         return render(request, "asistente/frmRegistrarMateriales.html", retorno)
     else:
@@ -443,11 +448,12 @@ def registrarMaterial(request):
         # datos del elemento en general
         nombreEle = request.POST['txtNombre']
         estadoEle = request.POST['cbEstado']
+        tipoMaterial = request.POST['cbTipo']
         # datos del elemento material
         referencia = request.POST.get('txtReferencia', None)
         marca = request.POST.get('txtMarca', None)
         # datos de la ubucacion fisica
-        deposito = request.POST['txtDesposito']
+        deposito = Deposito.objects.get(pk=int(request.POST['txtDesposito']))
         estante = request.POST.get('txtEstante', False)
         if estante == "":
             estante = 0
@@ -461,10 +467,10 @@ def registrarMaterial(request):
             # obtener cuantos elementos se han registrado
             cantidad = Elemento.objects.all().filter(eleTipo="MAT").count()
             # crear un codigo a partir de la cantidad, ajustando 0 al inicio
-            codigoElemento = "MAT" + str(cantidad+1).rjust(5, '0')
+            codigoElemento = f"{tipoMaterial}{str(cantidad+1).rjust(5, '0')}"
             # crear el elemento
             elemento = Elemento(
-                eleCodigo=codigoElemento, eleNombre=nombreEle, eleTipo="MAT", eleEstado=estadoEle)
+                eleCodigo=codigoElemento, eleNombre=nombreEle, eleTipo=tipoMaterial, eleEstado=estadoEle)
             # salvar el elemento en la base de datos
             elemento.save()
             # crear objeto ubicación física del elemento
@@ -556,6 +562,7 @@ def registrarEntradaMaterial(request):
 
 
 def getElemento(request, codigo):
+    print(codigo)
     elemento = devolutivoOrMaterial(codigo)
 
     if elemento.__class__.__name__ == "Devolutivo":
@@ -607,12 +614,15 @@ def getElemento(request, codigo):
 
 def devolutivoOrMaterial(codigo):
     elemento = Elemento.objects.get(eleCodigo=codigo)
+    print(f"Codigo: {codigo}")
 
-    if "MAT" in codigo:
+    if "MAT" in codigo or "HER" in codigo:
         material = Material.objects.get(matElemento=elemento)
+        print("retorno matetial o herramienta")
         return material
-    elif "MAQ" in codigo or "HER" in codigo or "EQU" in codigo:
+    elif "MAQ" in codigo or "EQU" in codigo:
         devolutivo = Devolutivo.objects.get(devElemento=elemento)
+        print("retrono devolutivo")
         return devolutivo
     else:
         mensaje = "No existe ese material"
@@ -763,7 +773,8 @@ def vistaVerSolicitudesIntructor(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
-def vistaVerSolicitudesAprovadas(request):
+    
+def vistaVerSolicitudesAprobadas(request):
     if request.user.is_authenticated:
         retorno = {"user": request.user,
                    "rol": request.user.groups.get().name,
@@ -772,6 +783,7 @@ def vistaVerSolicitudesAprovadas(request):
     else:
         mensaje = "Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html", {"mensaje": mensaje})
+    
 def vistaVerSolicitudesPorAprobar(request):
     if request.user.is_authenticated:
         retorno = {"user": request.user,
@@ -864,6 +876,7 @@ def AtenderSolicitud(request,id):
             with transaction.atomic():
                 detalleDeLaSolicitud = DetalleSolicitud.objects.filter(detSolicitud=id)
                 for detalle in detalleDeLaSolicitud:
+                    print(detalle)
                     cantidad = int(request.POST.get(f'cant{detalle.detElemento.eleCodigo}'))
                     observacion = request.POST.get('observaciones')
                     detSolicitud = DetalleSolicitud.objects.get(pk=detalle.id)
@@ -924,29 +937,37 @@ def vistaGestionarInventario(request):
                         
             elementoInventario['saldo']  = int(elementoInventario['entrada']) - int(elementoInventario['salida'])
                       
-            listaInventario.append(elementoInventario)                   
-        if request.user.groups.filter(name='Administrador').exists():
-            retorno = {"listaInventario":listaInventario}
+            listaInventario.append(elementoInventario)  
+        
+        retorno = {"listaInventario":listaInventario}
+        if request.user.groups.filter(name='Administrador').exists():            
             return render(request,"administrador/gestionarInventario.html",retorno)
-        elif request.user.groups.filter(name='Asistente').exists() :
-            retorno = {"listaInventario":listaInventario}
+        elif request.user.groups.filter(name='Asistente').exists() :            
             return render(request,"asistente/gestionarInventario.html",retorno)
-        else:
-            retorno = {"listaInventario":listaInventario}
-            return render(request,"instructor/gestionarInventario.html",retorno) 
+        else:            
+            return render(request,"instructor/gestionarInventario.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
     
 def vistaReporteGrafico(request):
+    import matplotlib
     if request.user.is_authenticated:
+        matplotlib.use('agg')
         listaElementos = Elemento.objects.all()
         salidaMateriales = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detElemento') \
                 .annotate(cantidad=Sum('salCantidadEntregada'))
+        
+        fichas = Ficha.objects.all()
+        cantidadPorFicha = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detSolicitud__solFicha') \
+                .annotate(cantidad=Count('salDetalleSolicitud__id'))
+        
                 
         instructores = User.objects.all()
         cantidadSolicitudes = SalidaDetalleSolicitud.objects.values('salDetalleSolicitud__detSolicitud__solUsuario')\
-            .annotate(cantidad = Count(SalidaDetalleSolicitud.id) )
+            .annotate(cantidad = Count('salDetalleSolicitud__id') )
+            
+        print(cantidadSolicitudes)
                 
         xElementos=[]
         yCantidadSolicitada=[]
@@ -966,6 +987,29 @@ def vistaReporteGrafico(request):
         rutaImagen = os.path.join(settings.MEDIA_ROOT+ "\\" + "grafica1.png")    
         plt.savefig(rutaImagen)  
         
+        #grafica cantidad solicitudes por ficha
+        xFichas=[]
+        yCantidadSolicitudes=[]
+        
+        colores=[]
+        for cantidad in cantidadPorFicha:
+            yCantidadSolicitudes.append(int(cantidad['cantidad']))
+            for ficha in fichas:
+                if cantidad['salDetalleSolicitud__detSolicitud__solFicha']==ficha.id:
+                    xFichas.append(f"Ficha  {ficha.ficCodigo}")
+                    color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+                    colores.append(color) 
+                    break 
+                
+        plt.close()  
+        textprops = {"fontsize":6}              
+        plt.title("Cantidad Solicitudes Por Ficha")  
+        plt.pie(yCantidadSolicitudes,labels=xFichas,autopct="%0.2f %%",textprops=textprops, colors=colores)    
+        rutaImagen = os.path.join(settings.MEDIA_ROOT+ "\\" + "grafica3.png")    
+        plt.savefig(rutaImagen) 
+        
+        
+        #grafica cantidad solicitudes por instructor
         xInstructores=[]
         yCantidadSolicitudes=[]
         
@@ -986,8 +1030,9 @@ def vistaReporteGrafico(request):
         plt.ylabel("Cantidad Solicitudes")
         rutaImagen = os.path.join(settings.MEDIA_ROOT+ "\\" + "grafica2.png")    
         plt.savefig(rutaImagen)  
-            
+        
         plt.close()
+        
         return render(request,"administrador/reportesEstadisticos.html")  
     else:
         mensaje="Debe iniciar sesión"
@@ -1066,7 +1111,7 @@ def registroDevolucionElementos(request):
                 #se puede enviar correo al instructor con información de lo que se le entrega
                 archivo = 'media/devolucion.pdf'
                 mensaje=f'Cordial saludo,<b>{instructor.first_name} {instructor.last_name}</b>, nos permitimos \
-                    informarle que que se ha registrado la devolución de elementos entragados a usted \
+                    informarle que se ha registrado la devolución de elementos entregados a usted \
                     para el desarrollo de actividades de formación con sus aprendices.\
                     <br><br>Se anexa documento en formato pdf como soporte de la devolución de los elementos.\
                     Muchas gracias por su compromiso en la devolución oportuna de los elementos.'
@@ -1089,7 +1134,6 @@ def generarPdfDevoluciones(datos,instructor):
     doc.set_font("Arial","B",12)
     doc.mostrarDatos(datos,instructor)
     doc.output(f'media/devolucion.pdf', "F")
-    
     
 def vistaHojaVidaDevolutivo(request,id):
     devolutivo = Devolutivo.objects.get(pk=id)
@@ -1143,7 +1187,6 @@ def registrarHojaVida(request):
         retorno = {"estado":estado, "mensaje":mensaje,"devolutivo":devolutivo,"hojaVida":hojaVida}
         
         return render(request, "asistente/frmRegistrarHojaVidaDevolutivo.html",retorno) 
-
 
 #falta hacer que funcione
 def vistaGestionarMantenimientos(request):
@@ -1202,7 +1245,6 @@ def registrarMantenimiento(request):
             
         retorno = {"estado":estado, "mensaje":mensaje}
         return render (request,"instructor/frmRegistrarMantenimiento.html",retorno) 
-
  
 def vistaMantenimientoPorEquipo(request,id):
     elemento = Elemento.objects.get(pk=id)

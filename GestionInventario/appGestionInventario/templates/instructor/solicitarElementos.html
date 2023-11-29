@@ -9,31 +9,31 @@
 
 {% load static %}
 <br>
-<h3 class="text-center fw-bold">Solicitar Elementos</h3>
-<div class="container" style="min-height:100vh; margin-bottom:5rem;">
-    <div class="d-flex my-1 row">
-        <input class="form-control me-2 col-11 col-sm" type="search" placeholder="Search" list="elementos" name="search">
-        <button class="btn btn-success my-1 verdeSena" type="button" onclick="addElement()" style="width: 20%;">Agregar</button>
-        <datalist id="elementos" class="dataList">
+
+<h3 class="text-center fw-bold mt-2">Solicitar Elementos</h3>
+<div class="container w-75" style="min-height:100vh; margin-bottom:5rem;">
+    <div class="my-1 row">
+        <input class="form-control me-2 col-11 col-sm" type="search" placeholder="Clic para Buscar" list="elementos" name="search">
+        <button class="btn btn-lg btn-secondary my-1" type="button" onclick="addElement()" style="width: 10%;"><i class="fa-solid fa-plus fa-bounce"></i>Agregar</button>
+        <datalist id="elementos" class="dataList mt-2">
         </datalist>
     </div>
-    <div class="d-flex row">
+    <div class="row mt-2">
         <!-- Button to open the offcanvas sidebar -->
-        <div class="col-sm-4 my-2">
-            <button class="btn btn-success verdeSena w-100" type="button" data-bs-toggle="offcanvas"
+        <div class="col sm-2">
+            <button class="btn btn-lg btn-success verdeSena"  style="width: 50%;" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#demo">
             Elementos
             </button>
         </div>
-        <div class="col-sm-4 my-2">
-            <button class="btn btn-success verdeSena w-100" type="button" onclick="prepararSolicitud()">
+        <div class="col sm-2">
+            <button class="btn btn-lg btn-success verdeSena" style="width: 50%;" type="button" onclick="prepararSolicitud()">
                 Hacer Solicitud
             </button>
         </div>
-        <div class="col-sm-4 my-2">
-            <button class="btn btn-success verdeSena w-100" type="button" onclick="deleteAllElements()">
-                Eliminar Elementos
-            </button>
+        <div class="col sm-2">
+            <button class="btn btn-lg btn-danger" style="width: 50%;" type="button" onclick="deleteAllElements()">
+                <i class="fa-solid fa-trash"></i> Elementos
         </div>
     </div>
     <div class="row justify-content-center align-items-center g-2 my-1 detalleElementos" id="detalleElementos"></div>
@@ -46,8 +46,8 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-header">
-        <input class="form-control me-2 w-75" type="search" placeholder="Search" list="elementos" name="search">
-        <button class="btn btn-primary w-25" type="button" onclick="addElement()">Search</button>
+        <input class="form-control me-2 w-75" type="search" placeholder="Clic para Buscar" list="elementos" name="search">
+        <button class="btn btn-success w-25" type="button" onclick="addElement()">Buscar</button>
     </div>
     <div class="offcanvas-body">
         <div id="offcanvasElements">
@@ -82,12 +82,12 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                      <label for="dateProyect" class="form-label">Para cuando lo necesita:</label>
+                      <label for="dateProyect" class="form-label">¿Para cuándo lo necesita?</label>
                       <input type="datetime-local"
                         class="form-control" name="dateProyect" id="dateProyectRequerida" min="{{hoy}}">
                     </div>
                     <div class="mb-3">
-                      <label for="dateProyect" class="form-label">Cuando puede devolverlo:</label>
+                      <label for="dateProyect" class="form-label">¿Cuándo puede devolverlo?</label>
                       <input type="datetime-local"
                         class="form-control" name="dateProyect" id="dateProyectDevolver" min="{{hoy}}">
                     </div>
